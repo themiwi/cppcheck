@@ -20,8 +20,27 @@ SET(CHECKCLI_SRCS
   "${TINYXML_INCLUDE_DIR}tinyxmlerror.cpp"
   "${TINYXML_INCLUDE_DIR}tinyxmlparser.cpp")
 
-set(CPPCHECK_LIB_DIR "${CPPCHECK_SOURCE_DIR}/lib/")
-include("${CPPCHECK_LIB_DIR}library_sources.cmake")
+option(CPPCHECK_CLI_BUILD_EMBED_LIBRARY_SOURCE_CODE
+       "The source files of Cppchecks's library should be directly included
+for the compilation of the command line interface.")
+mark_as_advanced(CPPCHECK_CLI_BUILD_EMBED_LIBRARY_SOURCE_CODE)
+
+if(CPPCHECK_CLI_BUILD_EMBED_LIBRARY_SOURCE_CODE)
+   set(CPPCHECK_LIB_DIR "${CPPCHECK_SOURCE_DIR}/lib/")
+   include("${CPPCHECK_LIB_DIR}library_sources.cmake")
+   set(CHECKCLI_SRCS ${CHECKCLI_SRCS} ${CPPCHECK_LIB_SOURCES})
+else()
+   option(CPPCHECK_CLI_BUILD_USE_STATICALLY_LINKED_LIBRARY
+          "The static library file that was generated for Cppchecks's class library should be
+used for the link step of the command line interface.")
+   mark_as_advanced(CPPCHECK_CLI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
+
+   if(CPPCHECK_CLI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
+       set(CHECK_LIBS libchecks ${CHECK_LIBS})   # static approach
+   else()
+      set(CHECK_LIBS checks ${CHECK_LIBS})   # shared approach
+   endif()
+endif()
 
 if(WIN32)
    # Add Windows resource file
@@ -39,5 +58,5 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories("${CPPCHECK_SOURCE_DIR}/lib"
                     "${TINYXML_INCLUDE_DIR}")
-add_executable(cppcheck ${CHECKCLI_SRCS} ${CPPCHECK_LIB_SOURCES})
+add_executable(cppcheck ${CHECKCLI_SRCS})
 TARGET_LINK_LIBRARIES(cppcheck ${CHECK_LIBS})
