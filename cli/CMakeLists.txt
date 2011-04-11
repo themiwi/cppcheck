@@ -36,7 +36,7 @@ used for the link step of the command line interface.")
    mark_as_advanced(CPPCHECK_CLI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
 
    if(CPPCHECK_CLI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-       set(CHECK_LIBS libchecks ${CHECK_LIBS})   # static approach
+       set(CHECK_LIBS static_checks ${CHECK_LIBS})   # static approach
    else()
       set(CHECK_LIBS checks ${CHECK_LIBS})   # shared approach
    endif()

@@ -64,7 +64,7 @@ used for the link step of the test suite.")
    mark_as_advanced(CPPCHECK_TEST_BUILD_USE_STATICALLY_LINKED_LIBRARY)
 
    if(CPPCHECK_TEST_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-      set(CHECK_LIBS libchecks)   # static approach
+      set(CHECK_LIBS static_checks)   # static approach
    else()
       set(CHECK_LIBS checks)   # shared approach
    endif()
