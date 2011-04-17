@@ -50,13 +50,17 @@
      <height>16777215</height>
     </size>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="ResultsView" name="mResults" native="true"/>
-      </item>
-     </layout>
+     <widget class="CodeEditor" name="plainTextEdit"/>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="ResultsView" name="mResults" native="true"/>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -66,7 +70,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="mMenuFile">
@@ -524,6 +528,11 @@
    <extends>QWidget</extends>
    <header>resultsview.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header>codeeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources>
