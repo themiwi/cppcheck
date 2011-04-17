@@ -198,12 +198,24 @@ void ApplicationList::Copy(const ApplicationList *list)
     }
 
     Clear();
+
+    mDefaultApplicationIndex = list->GetDefaultApplication();
+
     for (int i = 0; i < list->GetApplicationCount(); i++)
     {
-        const Application app = list->GetApplication(i);
-        AddApplication(app);
+        const Application &app = list->GetApplication(i);
+        if (app.getName() != INTERNAL_EDITOR)
+            AddApplication(app);
+
+        // move default application index up one step becauce the "internal editor" is skipped
+        else if (mDefaultApplicationIndex > i)
+            mDefaultApplicationIndex--;
     }
-    mDefaultApplicationIndex = list->GetDefaultApplication();
+
+    // Add internal editor to the end:
+    Application internalEditor;
+    internalEditor.setName(INTERNAL_EDITOR);
+    AddApplication(internalEditor);
 }
 
 void ApplicationList::Clear()
