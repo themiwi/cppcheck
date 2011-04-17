@@ -47,7 +47,7 @@ ResultsView::ResultsView(QWidget * parent) :
 
     connect(mUI.mTree, SIGNAL(ResultsHidden(bool)), this, SIGNAL(ResultsHidden(bool)));
     connect(mUI.mTree, SIGNAL(SelectionChanged(const QModelIndex &)), this, SLOT(UpdateDetails(const QModelIndex &)));
-    connect(mUI.mTree, SIGNAL(OpenFileAndHighlightError(QString, QVariant)), this, SIGNAL(OpenFileAndHighlightError(QString,QVariant)));
+    connect(mUI.mTree, SIGNAL(OpenFileAndHighlightError(QStringList, QList<int>)), this, SIGNAL(OpenFileAndHighlightError(QStringList,QList<int>)));
 }
 
 void ResultsView::Initialize(QSettings *settings, ApplicationList *list)

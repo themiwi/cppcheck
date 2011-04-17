@@ -704,7 +704,18 @@ void ResultsTree::StartApplication(QStandardItem *target, int application)
         const Application app = mApplications->GetApplication(application);
         if (app.getName() == "internal editor")
         {
-            emit(OpenFileAndHighlightError(file, data["line"]));
+            QStringList files;
+            QList<int> lines;
+            files << data["file"].toString();
+            lines << data["line"].toUInt();
+            for (int i = 0; target->child(i); ++i)
+            {
+                QStandardItem *child = target->child(i);
+                QVariantMap childData = child->data().toMap();
+                files << childData["file"].toString();
+                lines << childData["line"].toUInt();
+            }
+            emit(OpenFileAndHighlightError(files,lines));
         }
         else
         {

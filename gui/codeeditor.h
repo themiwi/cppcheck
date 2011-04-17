@@ -33,7 +33,7 @@ public slots:
      * @param file file name
      * @param line line number
      */
-    void OpenFileAndHighlightError(QString file, QVariant line);
+    void OpenFileAndHighlightError(QStringList files, QList<int> lines);
 
 protected:
     void resizeEvent(QResizeEvent *event);

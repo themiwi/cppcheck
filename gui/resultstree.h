@@ -152,10 +152,10 @@ signals:
     /**
      * @brief Open error in internal editor
      *
-     * @param file file name
-     * @param line line number
+     * @param files file names
+     * @param lines line numbers
      */
-    void OpenFileAndHighlightError(QString file, QVariant line);
+    void OpenFileAndHighlightError(QStringList files, QList<int> lines);
 
 protected slots:
     /**
