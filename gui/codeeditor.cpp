@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QTextBlock>
 #include <QPaintEvent>
+#include <QFile>
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
@@ -138,6 +139,26 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         top = bottom;
         bottom = top + (int) blockBoundingRect(block).height();
         ++blockNumber;
+    }
+}
+
+
+void CodeEditor::OpenFileAndHighlightError(QString fileName, QVariant line)
+{
+    clear();
+
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        setPlainText(file.readAll());
+
+        // Set line number
+        QTextCursor textCursor(document());
+        while (textCursor.blockNumber() + 1U < line.toUInt())
+            textCursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 1);
+        setTextCursor(textCursor);
+        centerCursor();
+        setFocus();
     }
 }
 

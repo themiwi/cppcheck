@@ -167,6 +167,14 @@ signals:
     */
     void ResultsHidden(bool hidden);
 
+    /**
+     * @brief Open error in internal editor
+     *
+     * @param file file name
+     * @param line line number
+     */
+    void OpenFileAndHighlightError(QString file, QVariant line);
+
 public slots:
 
     /**

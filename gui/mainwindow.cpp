@@ -90,6 +90,7 @@ MainWindow::MainWindow() :
     connect(mThread, SIGNAL(Done()), this, SLOT(CheckDone()));
     connect(mUI.mResults, SIGNAL(GotResults()), this, SLOT(ResultsAdded()));
     connect(mUI.mResults, SIGNAL(ResultsHidden(bool)), mUI.mActionShowHidden, SLOT(setEnabled(bool)));
+    connect(mUI.mResults, SIGNAL(OpenFileAndHighlightError(QString, QVariant)), mUI.codeEditor, SLOT(OpenFileAndHighlightError(QString,QVariant)));
     connect(mUI.mMenuView, SIGNAL(aboutToShow()), this, SLOT(AboutToShowViewMenu()));
 
     connect(mUI.mActionNewProjectFile, SIGNAL(triggered()), this, SLOT(NewProjectFile()));

@@ -52,7 +52,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="CodeEditor" name="plainTextEdit"/>
+     <widget class="CodeEditor" name="codeEditor"/>
     </item>
     <item>
      <widget class="QSplitter" name="splitter">

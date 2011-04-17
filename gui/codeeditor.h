@@ -26,6 +26,15 @@ public:
 
     void highlightErrors(const QList<int> &errorLines);
 
+public slots:
+    /**
+     * @brief Open file and highlight error
+     *
+     * @param file file name
+     * @param line line number
+     */
+    void OpenFileAndHighlightError(QString file, QVariant line);
+
 protected:
     void resizeEvent(QResizeEvent *event);
 

@@ -149,6 +149,14 @@ signals:
     */
     void SelectionChanged(const QModelIndex &current);
 
+    /**
+     * @brief Open error in internal editor
+     *
+     * @param file file name
+     * @param line line number
+     */
+    void OpenFileAndHighlightError(QString file, QVariant line);
+
 protected slots:
     /**
     * @brief Slot to quickstart an error with default application

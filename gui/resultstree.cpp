@@ -701,49 +701,56 @@ void ResultsTree::StartApplication(QStandardItem *target, int application)
             }
         }
 
-        if (file.indexOf(" ") > -1)
-        {
-            file.insert(0, "\"");
-            file.append("\"");
-        }
-
         const Application app = mApplications->GetApplication(application);
-        QString params = app.getParameters();
-        params.replace("(file)", file, Qt::CaseInsensitive);
-
-        QVariant line = data["line"];
-        params.replace("(line)", QString("%1").arg(line.toInt()), Qt::CaseInsensitive);
-
-        params.replace("(message)", data["message"].toString(), Qt::CaseInsensitive);
-        params.replace("(severity)", data["severity"].toString(), Qt::CaseInsensitive);
-
-        QString program = app.getPath();
-
-        // In Windows we must surround paths including spaces with quotation marks.
-#ifdef Q_WS_WIN
-        if (program.indexOf(" ") > -1)
+        if (app.getName() == "internal editor")
         {
-            if (!program.startsWith('"') && !program.endsWith('"'))
-            {
-                program.insert(0, "\"");
-                program.append("\"");
-            }
+            emit(OpenFileAndHighlightError(file, data["line"]));
         }
+        else
+        {
+            if (file.indexOf(" ") > -1)
+            {
+                file.insert(0, "\"");
+                file.append("\"");
+            }
+
+            QString params = app.getParameters();
+            params.replace("(file)", file, Qt::CaseInsensitive);
+
+            QVariant line = data["line"];
+            params.replace("(line)", QString("%1").arg(line.toInt()), Qt::CaseInsensitive);
+
+            params.replace("(message)", data["message"].toString(), Qt::CaseInsensitive);
+            params.replace("(severity)", data["severity"].toString(), Qt::CaseInsensitive);
+
+            QString program = app.getPath();
+
+            // In Windows we must surround paths including spaces with quotation marks.
+#ifdef Q_WS_WIN
+            if (program.indexOf(" ") > -1)
+            {
+                if (!program.startsWith('"') && !program.endsWith('"'))
+                {
+                    program.insert(0, "\"");
+                    program.append("\"");
+                }
+            }
 #endif // Q_WS_WIN
 
-        const QString cmdLine = QString("%1 %2").arg(program).arg(params);
+            const QString cmdLine = QString("%1 %2").arg(program).arg(params);
 
-        bool success = QProcess::startDetached(cmdLine);
-        if (!success)
-        {
-            QString text = tr("Could not start %1\n\nPlease check the application path and parameters are correct.").arg(program);
+            bool success = QProcess::startDetached(cmdLine);
+            if (!success)
+            {
+                QString text = tr("Could not start %1\n\nPlease check the application path and parameters are correct.").arg(program);
 
-            QMessageBox msgbox(this);
-            msgbox.setWindowTitle("Cppcheck");
-            msgbox.setText(text);
-            msgbox.setIcon(QMessageBox::Critical);
+                QMessageBox msgbox(this);
+                msgbox.setWindowTitle("Cppcheck");
+                msgbox.setText(text);
+                msgbox.setIcon(QMessageBox::Critical);
 
-            msgbox.exec();
+                msgbox.exec();
+            }
         }
     }
 }
