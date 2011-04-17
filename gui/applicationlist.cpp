@@ -95,7 +95,8 @@ bool ApplicationList::LoadSettings(QSettings *programSettings)
     }
 
     // Make sure there is an "internal editor" entry
-    if (!names.contains(INTERNAL_EDITOR)) {
+    if (!names.contains(INTERNAL_EDITOR))
+    {
         Application app;
         app.setName(INTERNAL_EDITOR);
         app.setPath("");
