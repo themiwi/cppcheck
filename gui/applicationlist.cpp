@@ -26,6 +26,8 @@
 #include "applicationlist.h"
 #include "application.h"
 
+/** name of internal editor */
+static const char INTERNAL_EDITOR[] = "internal editor";
 
 ApplicationList::ApplicationList(QObject *parent) :
     QObject(parent),
@@ -92,6 +94,17 @@ bool ApplicationList::LoadSettings(QSettings *programSettings)
         while (0);
     }
 
+    // Make sure there is an "internal editor" entry
+    if (!names.contains(INTERNAL_EDITOR)) {
+        Application app;
+        app.setName(INTERNAL_EDITOR);
+        app.setPath("");
+        app.setParameters("");
+        AddApplication(app);
+        if (names.size() == 1)
+            defapp = 0;
+    }
+
     if (names.size() > 0 && (names.size() == paths.size()))
     {
         for (int i = 0; i < names.size(); i++)
@@ -156,7 +169,7 @@ void ApplicationList::SetApplication(int index, const Application &app)
 
 void ApplicationList::AddApplication(const Application &app)
 {
-    if (app.getName().isEmpty() || app.getPath().isEmpty())
+    if (app.getName().isEmpty() || (app.getName() != INTERNAL_EDITOR && app.getPath().isEmpty()))
     {
         return;
     }
