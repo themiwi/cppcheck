@@ -105,7 +105,7 @@ void CodeEditor::highlightErrors(const QList<int> &errorLines)
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
         selection.cursor.movePosition(QTextCursor::Start);
-        selection.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, errorLines[i] - 1);
+        selection.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 1 + errorLines[i]);
         extraSelections.append(selection);
     }
 
@@ -143,19 +143,21 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 }
 
 
-void CodeEditor::OpenFileAndHighlightError(QString fileName, QVariant line)
+void CodeEditor::OpenFileAndHighlightError(QStringList files, QList<int> lines)
 {
     clear();
 
-    QFile file(fileName);
+    QFile file(files[0]);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         setPlainText(file.readAll());
 
+        highlightErrors(lines);
+
         // Set line number
         QTextCursor textCursor(document());
-        while (textCursor.blockNumber() + 1U < line.toUInt())
-            textCursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 1);
+        textCursor.movePosition(QTextCursor::Start);
+        textCursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 1+lines[0]);
         setTextCursor(textCursor);
         centerCursor();
         setFocus();
