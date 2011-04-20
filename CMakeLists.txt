@@ -15,14 +15,24 @@ if(NOT PCRE_FOUND)
 endif()
 
 if(MSVC)
-  find_program(DUMPBIN_EXECUTABLE dumpbin.exe
-    PATHS
-    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\10.0;InstallDir]/../../VC/bin"
-    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\9.0;InstallDir]/../../VC/bin"
-    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\8.0;InstallDir]/../../VC/bin"
-    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\7.0;InstallDir]/../../VC7/bin"
-    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\6.0\\Setup\\Microsoft Visual C++;ProductDir]/bin"
-    )
+  set(hkey PATHS "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio")
+  if(MSVC10)
+    set(hkey "${hkey}\\10.0;InstallDir]/../../VC/bin")
+  elseif(MSVC90)
+    set(hkey "${hkey}\\9.0;InstallDir]/../../VC/bin")
+  elseif(MSVC80)
+    set(hkey "${hkey}\\8.0;InstallDir]/../../VC/bin")
+  elseif(MSVC71)
+    set(hkey "${hkey}\\7.1;InstallDir]/../../VC7/bin")
+  elseif(MSVC70)
+    set(hkey "${hkey}\\7.0;InstallDir]/../../VC7/bin")
+  elseif(MSVC60)
+    set(hkey "${hkey}\\10.0;InstallDir]/../../VC/bin")
+  else()
+    message("Unknown MSVC version")
+    set(hkey)
+  endif()
+  find_program(DUMPBIN_EXECUTABLE dumpbin.exe ${hkey})
   if(NOT DUMPBIN_EXECUTABLE)
     message(SEND_ERROR "Failed to find DUMPBIN_EXECUTABLE")
   endif()
