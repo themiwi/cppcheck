@@ -1,0 +1,32 @@
+# - Configuration module for LIBCPPCHECK to be used with FIND_PACKAGE().
+# This sets the following variables:
+#  LIBCPPCHECK_FOUND
+#  LIBCPPCHECK_INCLUDE_DIRS
+#  LIBCPPCHECK_LIBRARIES
+#  LIBCPPCHECK_STATIC_LINK_FLAGS
+# By default this module sets LIBCPPCHECK_LIBRARIES to use the shared
+# (dynamically linked) libraries. Setting the variable LIBCPPCHECK_USE_STATIC
+# to TRUE makes the module set LIBCPPCHECK_LIBRARIES to use the static library
+# instead.
+#
+
+# Tell the user project where to find our headers and libraries
+set(LIBCPPCHECK_INCLUDE_DIR "@CONF_INCLUDE_DIR@")
+set(LIBCPPCHECK_INCLUDE_DIRS "${LIBCPPCHECK_INCLUDE_DIR}")
+set(LIBCPPCHECK_LIBRARY_DIR "@CONF_LIB_DIR@")
+set(LIBCPPCHECK_LIBRARY_DIRS "${LIBCPPCHECK_LIBRARY_DIR}")
+
+# Our library dependencies
+include("@CONF_CMAKE_DIR@/LIBCPPCHECKExports.cmake")
+
+set(LIBCPPCHECK_STATIC_LIBRARY static_checks)
+set(LIBCPPCHECK_SHARED_LIBRARY checks)
+if(LIBCPPCHECK_USE_STATIC)
+  set(LIBCPPCHECK_LIBRARIES "${LIBCPPCHECK_STATIC_LIBRARY}")
+else()
+  set(LIBCPPCHECK_LIBRARIES "${LIBCPPCHECK_SHARED_LIBRARY}")
+endif()
+
+@CONF_STATIC_LINK_FLAGS@
+
+# ------------------------- vim: set sw=2 sts=2 et: --------------- end-of-file
