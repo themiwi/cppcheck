@@ -15,7 +15,14 @@ if(NOT PCRE_FOUND)
 endif()
 
 if(MSVC)
-  find_program(DUMPBIN_EXECUTABLE dumpbin.exe)
+  find_program(DUMPBIN_EXECUTABLE dumpbin.exe
+    PATHS
+    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\10.0;InstallDir]/../../VC/bin"
+    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\9.0;InstallDir]/../../VC/bin"
+    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\8.0;InstallDir]/../../VC/bin"
+    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\7.0;InstallDir]/../../VC7/bin"
+    "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio\\6.0\\Setup\\Microsoft Visual C++;ProductDir]/bin"
+    )
   if(NOT DUMPBIN_EXECUTABLE)
     message(SEND_ERROR "Failed to find DUMPBIN_EXECUTABLE")
   endif()
