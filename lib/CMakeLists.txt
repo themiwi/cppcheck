@@ -40,7 +40,7 @@ if(MSVC)
     COMMAND "${CMAKE_COMMAND}" "-DDUMPBIN=${DUMPBIN_EXECUTABLE}"
     "-DOUTPUT=${outfile}" "-DLIBRARY=$<TARGET_FILE:static_checks>"
     -P "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
-    DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
+    DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake" static_checks
     COMMENT "Generating LIBCPPCHECKStaticLinkFlags.cmake"
     VERBATIM)
   add_custom_target(staticLinkFlags ALL DEPENDS "${outfile}")
