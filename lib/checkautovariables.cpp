@@ -33,7 +33,7 @@
 // Register this check class into cppcheck by creating a static instance of it..
 namespace
 {
-static CheckAutoVariables instance;
+CheckAutoVariables instance;
 }
 
 
