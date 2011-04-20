@@ -14,30 +14,6 @@ if(NOT PCRE_FOUND)
   message("PCRE not found, disabling user-defined rules")
 endif()
 
-if(MSVC)
-  set(hkey PATHS "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\VisualStudio")
-  if(MSVC10)
-    set(hkey "${hkey}\\10.0;InstallDir]/../../VC/bin")
-  elseif(MSVC90)
-    set(hkey "${hkey}\\9.0;InstallDir]/../../VC/bin")
-  elseif(MSVC80)
-    set(hkey "${hkey}\\8.0;InstallDir]/../../VC/bin")
-  elseif(MSVC71)
-    set(hkey "${hkey}\\7.1;InstallDir]/../../VC7/bin")
-  elseif(MSVC70)
-    set(hkey "${hkey}\\7.0;InstallDir]/../../VC7/bin")
-  elseif(MSVC60)
-    set(hkey "${hkey}\\10.0;InstallDir]/../../VC/bin")
-  else()
-    message("Unknown MSVC version")
-    set(hkey)
-  endif()
-  find_program(DUMPBIN_EXECUTABLE dumpbin.exe ${hkey})
-  if(NOT DUMPBIN_EXECUTABLE)
-    message(SEND_ERROR "Failed to find DUMPBIN_EXECUTABLE")
-  endif()
-endif()
-
 include(ExternalProject)
 
 # set up arguments for external projects
@@ -64,6 +40,12 @@ list(APPEND EP_CMAKE_ARGS
   -DPCRE_PCREPOSIX_LIBRARY=${PCRE_PCREPOSIX_LIBRARY}
   -DPCRE_FOUND=${PCRE_FOUND}
   -DCPPCHECK_CLI_USE_STATIC_LIBRARY=${CPPCHECK_CLI_USE_STATIC_LIBRARY})
+
+if(MSVC)
+  find_package(Dumpbin REQUIRED)
+  list(APPEND EP_CMAKE_ARGS
+    -DDUMPBIN_EXECUTABLE=${DUMPBIN_EXECUTABLE})
+endif()
 
 ExternalProject_Add(libcppcheck
   PREFIX "${CPPCHECK_BINARY_DIR}/lib"

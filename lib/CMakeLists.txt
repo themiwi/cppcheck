@@ -12,6 +12,10 @@ if(PCRE_FOUND)
    include_directories("${PCRE_INCLUDE_DIR}")
 endif()
 
+if(MSVC)
+  find_package(Dumpbin REQUIRED)
+endif()
+
 set(CPPCHECK_LIB_DIR "")
 include("library_sources.cmake")
 
