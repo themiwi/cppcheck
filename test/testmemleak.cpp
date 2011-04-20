@@ -589,7 +589,7 @@ private:
             , "getservbyname", "getservbyport", "glob", "index", "inet_addr", "inet_aton", "inet_network"
             , "initgroups", "link", "mblen", "mbstowcs", "mbtowc", "mkdir", "mkfifo", "mknod", "obstack_printf"
             , "obstack_vprintf", "opendir", "parse_printf_format", "pathconf", "popen", "psignal", "putenv"
-            , "readlink", "regcomp", "strxfrm", "wordexp"
+            , "readlink", "regcomp", "strxfrm", "wordexp", "sizeof"
         };
 
         for (unsigned int i = 0; i < (sizeof(call_func_white_list) / sizeof(char *)); ++i)
@@ -665,6 +665,13 @@ private:
         ASSERT_EQUALS("; if alloc ; else assign ; return use ;", simplifycode("; callfunc ; if callfunc { alloc ; } else { assign ; } return use ;"));
 
         ASSERT_EQUALS("; dealloc ; return ;", simplifycode("; while1 { if callfunc { dealloc ; return ; } else { continue ; } }"));
+
+        // remove outer if (#2733)
+        ASSERT_EQUALS("alloc ; return ; }", simplifycode("alloc ; if { if return use ; } return ; }"));
+        ASSERT_EQUALS("alloc ; return ; }", simplifycode("alloc ; if { if(var) return use ; } return ; }"));
+        TODO_ASSERT_EQUALS("alloc ; return ; }",
+                           "alloc ; if(var) { if return use ; } return ; }",
+                           simplifycode("alloc ; if(var) { if return use ; } return ; }"));
 
         // "if ; .."
         ASSERT_EQUALS("; if xxx ;", simplifycode("; if ; else xxx ;"));

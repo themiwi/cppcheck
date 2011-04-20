@@ -66,7 +66,7 @@ static const char * const call_func_white_list[] =
     , "readlink", "readv"
     , "realloc", "regcomp", "remove", "rename", "return", "rewind", "rewinddir", "rindex"
     , "rmdir" ,"scandir", "scanf", "seekdir"
-    , "setbuf", "setbuffer", "sethostname", "setlinebuf", "setlocale" ,"setvbuf", "snprintf", "sprintf", "sscanf"
+    , "setbuf", "setbuffer", "sethostname", "setlinebuf", "setlocale" ,"setvbuf", "sizeof" ,"snprintf", "sprintf", "sscanf"
     , "stat", "stpcpy", "strcasecmp", "strcat", "strchr", "strcmp", "strcoll"
     , "strcpy", "strcspn", "strdup", "stricmp", "strlen", "strncasecmp", "strncat", "strncmp"
     , "strncpy", "strpbrk","strrchr", "strspn", "strstr", "strtod", "strtol", "strtoul", "strxfrm", "switch"
@@ -1899,6 +1899,14 @@ void CheckMemoryLeakInFunction::simplifycode(Token *tok)
                 else if (Token::Match(tok2->next(), "if { dealloc|assign ; callfunc ; } !!else"))
                 {
                     Token::eraseTokens(tok2, tok2->tokAt(8));
+                    done = false;
+                }
+
+                // Remove outer condition..
+                else if (Token::Match(tok2->next(), "if { if return use ; }"))
+                {
+                    tok2->tokAt(6)->deleteNext();
+                    Token::eraseTokens(tok2, tok2->tokAt(3));
                     done = false;
                 }
 
