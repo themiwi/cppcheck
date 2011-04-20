@@ -36,10 +36,11 @@ endif()
 if(MSVC)
   # generate /INCLUDE flags for LINK.EXE
   set(outfile "${LIBCPPCHECK_BINARY_DIR}/LIBCPPCHECKStaticLinkFlags.cmake")
-  add_custom_target(OUTPUT "${outfile}"
+  add_custom_command(OUTPUT "${outfile}"
     COMMAND "${CMAKE_COMMAND}" "-DDUMPBIN=${DUMPBIN_EXECUTABLE}"
     "-DOUTPUT=${outfile}" "-DLIBRARY=$<TARGET_FILE:static_checks>"
     -P "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
+    DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
     COMMENT "Generating LIBCPPCHECKStaticLinkFlags.cmake"
     VERBATIM)
   add_custom_target(staticLinkFlags ALL DEPENDS "${outfile}")
