@@ -49,7 +49,6 @@ if(MSVC)
 endif()
 
 if(PCRE_FOUND)
-  message("DEBUG: PCRE_LIBRARIES = ${PCRE_LIBRARIES}")
   target_link_libraries(checks ${PCRE_LIBRARIES})
   target_link_libraries(static_checks ${PCRE_LIBRARIES})
 endif()
