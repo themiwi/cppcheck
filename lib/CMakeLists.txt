@@ -23,6 +23,8 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
+set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
+
 add_library(checks SHARED ${CPPCHECK_LIB_SOURCES})
 add_library(static_checks STATIC ${CPPCHECK_LIB_SOURCES})
 set_target_properties(static_checks PROPERTIES OUTPUT_NAME "checks")
