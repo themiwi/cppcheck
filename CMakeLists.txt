@@ -16,6 +16,7 @@ endif()
 # helper function
 include(ExternalProject)
 include(CMakeParseArguments)
+_ep_get_configuration_subdir_suffix(CFG_DIR)
 
 # This function creates an ExternalProject for the named subdirectory. It takes
 # the following optional arguments:
@@ -45,12 +46,11 @@ function(cppcheck_add_subdirectory name)
     ${dep}
     PREFIX "${CMAKE_BINARY_DIR}/${name}"
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${name}"
-    INSTALL_DIR "${CMAKE_BINARY_DIR}/inst"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}"
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
     )
   # make it always rebuild by removing stamp files
-  _ep_get_configuration_subdir_suffix(cfg_dir)
-  set(cmf_dir ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles${cfg_dir})
+  set(cmf_dir ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles${CFG_DIR})
   ExternalProject_Get_Property(${name} stamp_dir)
   add_custom_target(touch-${name} ALL
     COMMAND "${CMAKE_COMMAND}" -E remove "${stamp_dir}/${name}-install"
