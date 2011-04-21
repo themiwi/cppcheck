@@ -53,17 +53,16 @@ if(PCRE_FOUND)
   target_link_libraries(static_checks ${PCRE_LIBRARIES})
 endif()
 
-set(CONF_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/cppcheck")
-set(CONF_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-set(CONF_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/share/LIBCPPCHECK/cmake")
+set(_PREFIX "{_PREFIX}") # trick to get ${_PREFIX} into the configured file
+set(_DIR "{_DIR}") # ditto
 if(APPLE)
   set(CONF_STATIC_LINK_FLAGS
-    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,-force_load,${CMAKE_INSTALL_PREFIX}/lib/libchecks.a\")")
+    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,-force_load,$${_PREFIX}/lib/libchecks.a\")")
 elseif(CMAKE_SYSTEM_NAME STREQUAL Linux OR CYGWIN OR MINGW)
   set(CONF_STATIC_LINK_FLAGS
-    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,--whole-archive,${CMAKE_INSTALL_PREFIX}/lib/libchecks.a,--no-whole-archive\")")
+    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,--whole-archive,$${_PREFIX}/lib/libchecks.a,--no-whole-archive\")")
 elseif(MSVC)
-  set(CONF_STATIC_LINK_FLAGS "include(\"${CONF_CMAKE_DIR}/LIBCPPCHECKStaticLinkFlags.cmake\")")
+  set(CONF_STATIC_LINK_FLAGS "include(\"$${_DIR}/LIBCPPCHECKStaticLinkFlags.cmake\")")
 else()
   message(SEND_ERROR "FIXME: Don't know how to do static linking")
 endif()
