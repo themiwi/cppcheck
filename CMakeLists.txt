@@ -103,3 +103,8 @@ cppcheck_add_subdirectory(cli DEPENDS lib VARIABLES ${EP_CLI_VARS})
 #ELSE (MSVC_IDE)
 #  ADD_SUBDIRECTORY(test EXCLUDE_FROM_ALL)
 #ENDIF (MSVC_IDE)
+
+# installation
+set(INST_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}")
+install(DIRECTORY ${INST_DIR}/ # leave that trailing slash where it is!
+  DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
