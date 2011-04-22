@@ -6,8 +6,10 @@ option(CPPCHECK_CLI_USE_STATIC_LIBRARY
   "Link CLI against static cppcheck library." OFF)
 option(CPPCHECK_GUI_USE_STATIC_LIBRARY
   "Link GUI against static cppcheck library." OFF)
+option(CPPCHECK_TEST_USE_STATIC_LIBRARY
+  "Link GUI against static cppcheck library." OFF)
 mark_as_advanced(CPPCHECK_CLI_USE_STATIC_LIBRARY
-  CPPCHECK_GUI_USE_STATIC_LIBRARY)
+  CPPCHECK_GUI_USE_STATIC_LIBRARY CPPCHECK_TEST_USE_STATIC_LIBRARY)
 
 list(APPEND CMAKE_MODULE_PATH "${CPPCHECK_SOURCE_DIR}/cmake/modules")
 
@@ -89,6 +91,9 @@ set(EP_CLI_VARS
   CMAKE_EXE_LINKER_FLAGS_MINSIZEREL
   )
 
+string(REPLACE "CPPCHECK_CLI_USE_STATIC_LIBRARY"
+  "CPPCHECK_TEST_USE_STATIC_LIBRARY" EP_TEST_VARS "${EP_CLI_VARS}")
+
 cppcheck_add_subdirectory(lib VARIABLES ${EP_LIB_VARS})
 cppcheck_add_subdirectory(cli DEPENDS lib VARIABLES ${EP_CLI_VARS})
 
@@ -106,14 +111,17 @@ else()
   message("GUI not built since QT4 not found.")
 endif()
 
-## Exclude tests from command line targets but include them to VS IDE targets.
-## There is 'make check' -target for compiling and running tests from
-## command line.
-#IF (MSVC_IDE)
-#  ADD_SUBDIRECTORY(test)
-#ELSE (MSVC_IDE)
-#  ADD_SUBDIRECTORY(test EXCLUDE_FROM_ALL)
-#ENDIF (MSVC_IDE)
+cppcheck_add_subdirectory(cppcheck-test SOURCE_DIR test DEPENDS lib
+  VARIABLES ${EP_TEST_VARS} NO_INSTALL)
+ExternalProject_Get_Property(cppcheck-test binary_dir)
+if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
+  set(checkcmd "$(MAKE)" -C "${binary_dir}" check)
+else()
+  set(checkcmd "${CMAKE_COMMAND}" --build "${binary_dir}"
+    --config ${CMAKE_CFG_INTDIR} --target check)
+endif()
+add_custom_target(check COMMAND ${checkcmd})
+add_dependencies(check cppcheck-test)
 
 # installation
 set(INST_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}")

@@ -1,13 +1,23 @@
 # Instructions for building of the cppcheck test suite
 
-set(TINYXML_INCLUDE_DIR "${CPPCHECK_SOURCE_DIR}/externals/tinyxml/")
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(CPPCHECKTESTS)
 
-SET(CHECKTEST_SRCS
-  "${CPPCHECK_SOURCE_DIR}/cli/cmdlineparser.cpp"
-  "${CPPCHECK_SOURCE_DIR}/cli/cppcheckexecutor.cpp"
-  "${CPPCHECK_SOURCE_DIR}/cli/filelister.cpp"
-  "${CPPCHECK_SOURCE_DIR}/cli/threadexecutor.cpp"
-  "${CPPCHECK_SOURCE_DIR}/cli/pathmatch.cpp"
+# for non-superbuild stand-alone use
+option(CPPCHECK_TEST_USE_STATIC_LIBRARY
+  "Link cppcheck-test against static cppcheck library." OFF)
+
+set(CPPCHECK_USE_STATIC ${CPPCHECK_TEST_USE_STATIC_LIBRARY})
+find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
+
+set(CPPCHECKTEST_LIBS ${CPPCHECK_LIBRARIES})
+
+SET(CPPCHECKTEST_SRCS
+  ../cli/cmdlineparser.cpp
+  ../cli/cppcheckexecutor.cpp
+  ../cli/filelister.cpp
+  ../cli/threadexecutor.cpp
+  ../cli/pathmatch.cpp
   options.cpp
   testautovariables.cpp
   testbufferoverrun.cpp
@@ -43,53 +53,33 @@ SET(CHECKTEST_SRCS
   testunusedfunctions.cpp
   testunusedprivfunc.cpp
   testunusedvar.cpp
-  "${TINYXML_INCLUDE_DIR}tinystr.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxml.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxmlerror.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxmlparser.cpp")
-
-option(CPPCHECK_TEST_BUILD_EMBED_LIBRARY_SOURCE_CODE
-       "The source files of Cppchecks's library should be directly included
-for the compilation of the test suite.")
-mark_as_advanced(CPPCHECK_TEST_BUILD_EMBED_LIBRARY_SOURCE_CODE)
-
-if(CPPCHECK_TEST_BUILD_EMBED_LIBRARY_SOURCE_CODE)
-   set(CPPCHECK_LIB_DIR "${CPPCHECK_SOURCE_DIR}/lib/")
-   include("${CPPCHECK_LIB_DIR}library_sources.cmake")
-   set(CHECKTEST_SRCS ${CHECKTEST_SRCS} ${CPPCHECK_LIB_SOURCES})
-else()
-   option(CPPCHECK_TEST_BUILD_USE_STATICALLY_LINKED_LIBRARY
-          "The static library file that was generated for Cppchecks's class library should be
-used for the link step of the test suite.")
-   mark_as_advanced(CPPCHECK_TEST_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-
-   if(CPPCHECK_TEST_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-      set(CHECK_LIBS static_checks)   # static approach
-   else()
-      set(CHECK_LIBS checks)   # shared approach
-   endif()
-endif()
+  ../externals/tinyxml/tinystr.cpp
+  ../externals/tinyxml/tinyxml.cpp
+  ../externals/tinyxml/tinyxmlerror.cpp
+  ../externals/tinyxml/tinyxmlparser.cpp)
 
 if(WIN32)
    if(NOT CYGWIN)
       # Windows needs additional shlwapi library.
-      set(CHECK_LIBS ${CHECK_LIBS} shlwapi)
+      list(APPEND CPPCHECKTEST_LIBS shlwapi)
    endif()
 else()
-   set(CHECKTEST_SRCS ${CHECKTEST_SRCS} testfilelister_unix.cpp)
+  list(APPEND CPPCHECKTEST_SRCS testfilelister_unix.cpp)
 endif()
 
 if (CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
-include_directories("${CPPCHECK_SOURCE_DIR}/lib"
-                    "${CPPCHECK_SOURCE_DIR}/cli"
-                    "${TINYXML_INCLUDE_DIR}")
-add_executable(test ${CHECKTEST_SRCS})
-TARGET_LINK_LIBRARIES(test ${CHECK_LIBS})
+if(NOT CPPCHECK_TEST_USE_STATIC_LIBRARY)
+  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
+include_directories(${CPPCHECK_INCLUDE_DIRS} ../cli ../externals/tinyxml)
+add_executable(cppcheck-test EXCLUDE_FROM_ALL ${CPPCHECKTEST_SRCS})
+target_link_libraries(cppcheck-test ${CPPCHECKTEST_LIBS})
 
 # Add custom 'make check' -target
 # It compiles and runs tests
-add_custom_target(check COMMAND test)
-add_dependencies(check test)
+add_custom_target(check COMMAND cppcheck-test)
+add_dependencies(check cppcheck-test)
