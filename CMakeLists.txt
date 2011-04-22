@@ -49,18 +49,12 @@ function(cppcheck_add_subdirectory name)
     INSTALL_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}"
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
     )
-  # make it always rebuild by removing stamp files
-  set(cmf_dir ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles${CFG_DIR})
-  ExternalProject_Get_Property(${name} stamp_dir)
-  add_custom_target(touch-${name} ALL
-    COMMAND "${CMAKE_COMMAND}" -E remove "${stamp_dir}/${name}-install"
-    COMMAND "${CMAKE_COMMAND}" -E remove ${cmf_dir}/${name}-complete
-    COMMENT "Enable rebuild of '${name}'")
-  # set up dependencies
-  add_dependencies(touch-${name} ${name})
-  foreach(d IN LISTS cas_DEPENDS)
-    add_dependencies(touch-${name} touch-${d})
-  endforeach()
+  ExternalProject_Add_Step(${name} forceconfigure
+    COMMAND ${CMAKE_COMMAND} -E echo "Force re-configure for later builds..."
+    DEPENDEES download
+    DEPENDERS configure
+    ALWAYS 1
+    )
 endfunction()
 
 # set up arguments for external projects
