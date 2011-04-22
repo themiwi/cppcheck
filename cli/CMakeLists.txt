@@ -20,19 +20,17 @@ if(PCRE_FOUND)
    list(APPEND CPPCHECKCLI_LIBS ${PCRE_LIBRARIES})
 endif()
 
-set(TINYXML_INCLUDE_DIR "${CPPCHECKCLI_SOURCE_DIR}/../externals/tinyxml/")
-
-SET(CPPCHECKCLI_SRCS
+set(CPPCHECKCLI_SRCS
   cmdlineparser.cpp
   cppcheckexecutor.cpp
   filelister.cpp
   main.cpp
   threadexecutor.cpp
   pathmatch.cpp
-  "${TINYXML_INCLUDE_DIR}tinystr.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxml.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxmlerror.cpp"
-  "${TINYXML_INCLUDE_DIR}tinyxmlparser.cpp")
+  ../externals/tinyxml/tinystr.cpp
+  ../externals/tinyxml/tinyxml.cpp
+  ../externals/tinyxml/tinyxmlerror.cpp
+  ../externals/tinyxml/tinyxmlparser.cpp)
 
 if(WIN32)
    # Add Windows resource file
@@ -52,7 +50,7 @@ if(NOT CPPCHECK_CLI_USE_STATIC_LIBRARY)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 
-include_directories(${CPPCHECK_INCLUDE_DIRS} "${TINYXML_INCLUDE_DIR}")
+include_directories(${CPPCHECK_INCLUDE_DIRS} ../externals/tinyxml)
 add_executable(cppcheck ${CPPCHECKCLI_SRCS})
 target_link_libraries(cppcheck ${CPPCHECKCLI_LIBS})
 
