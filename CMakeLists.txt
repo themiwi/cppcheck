@@ -21,48 +21,7 @@ endif()
 find_package(Qt4 COMPONENTS QtCore QtGui QtHelp QtMain QtXml)
 
 # helper function
-include(ExternalProject)
-include(CMakeParseArguments)
-_ep_get_configuration_subdir_suffix(CFG_DIR)
-
-# This function creates an ExternalProject for the named subdirectory. It takes
-# the following optional arguments:
-#  DEPENDS   : List of other ExternalProjects this subdirectory depends on
-#  VARIABLES : List of variable names to be passed to the ExternalProject. The
-#              entries take the form "VARNAME[=VARVALUE]", where the assignment
-#              part is optional. If it is not present, the value from the
-#              current scope is used. You must not pass lists in the assignment
-#              form.
-function(cppcheck_add_subdirectory name)
-  # argument parsing
-  cmake_parse_arguments(cas "" "" "DEPENDS;VARIABLES" ${ARGN})
-  if(cas_DEPENDS)
-    set(dep DEPENDS ${cas_DEPENDS})
-  else()
-    set(dep)
-  endif()
-  set(cmargs)
-  foreach(v IN LISTS cas_VARIABLES)
-    if(NOT v MATCHES =)
-      set(v "${v}=${${v}}")
-    endif()
-    list(APPEND cmargs "-D${v}")
-  endforeach()
-  # add external project
-  ExternalProject_Add(${name}
-    ${dep}
-    PREFIX "${CMAKE_BINARY_DIR}/${name}"
-    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${name}"
-    INSTALL_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}"
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
-    )
-  ExternalProject_Add_Step(${name} forceconfigure
-    COMMAND ${CMAKE_COMMAND} -E echo "Force re-configure for later builds..."
-    DEPENDEES download
-    DEPENDERS configure
-    ALWAYS 1
-    )
-endfunction()
+include(CPPCHECKUtilities)
 
 # set up arguments for external projects
 set(EP_COMMON_VARS
