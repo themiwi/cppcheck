@@ -19,11 +19,14 @@
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
+#include <QDir>
 #include <QLocale>
 #include "translationhandler.h"
 
 TranslationHandler::TranslationHandler(QObject *parent) :
     QObject(parent),
+    mTranslationsDir(QDir(QApplication::applicationDirPath()
+                          +"/../share/cppcheck/nls").path()),
     mCurrentLanguage("en"),
     mTranslator(new QTranslator(this))
 {
@@ -42,7 +45,7 @@ TranslationHandler::TranslationHandler(QObject *parent) :
 
     //Load English as a fallback language
     QTranslator *english = new QTranslator();
-    if (english->load("cppcheck_en"))
+    if (english->load("cppcheck_en", mTranslationsDir))
     {
         qApp->installTranslator(english);
     }
@@ -91,7 +94,7 @@ bool TranslationHandler::SetLanguage(const QString &code, QString &error)
     }
 
     //Load the new language
-    if (!mTranslator->load(mTranslations[index].mFilename))
+    if (!mTranslator->load(mTranslations[index].mFilename, mTranslationsDir))
     {
         //If it failed, lets check if the default file exists
         if (!QFile::exists(mTranslations[index].mFilename + ".qm"))

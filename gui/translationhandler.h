@@ -130,6 +130,11 @@ protected:
 private:
 
     /**
+     * @brief Directory containing the translation files.
+     */
+    const QString mTranslationsDir;
+
+    /**
     * @brief ISO 639 language code of the currently selected translation.
     *
     */
