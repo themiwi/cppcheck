@@ -4,7 +4,10 @@ project(CPPCHECK)
 
 option(CPPCHECK_CLI_USE_STATIC_LIBRARY
   "Link CLI against static cppcheck library." OFF)
-mark_as_advanced(CPPCHECK_CLI_USE_STATIC_LIBRARY)
+option(CPPCHECK_GUI_USE_STATIC_LIBRARY
+  "Link GUI against static cppcheck library." OFF)
+mark_as_advanced(CPPCHECK_CLI_USE_STATIC_LIBRARY
+  CPPCHECK_GUI_USE_STATIC_LIBRARY)
 
 list(APPEND CMAKE_MODULE_PATH "${CPPCHECK_SOURCE_DIR}/cmake/modules")
 
@@ -12,6 +15,8 @@ find_package(PCRE)
 if(NOT PCRE_FOUND)
   message("PCRE not found, disabling user-defined rules")
 endif()
+
+find_package(Qt4 COMPONENTS QtCore QtGui QtHelp QtMain QtXml)
 
 # helper function
 include(ExternalProject)
@@ -87,8 +92,20 @@ set(EP_CLI_VARS
 cppcheck_add_subdirectory(lib VARIABLES ${EP_LIB_VARS})
 cppcheck_add_subdirectory(cli DEPENDS lib VARIABLES ${EP_CLI_VARS})
 
-#ADD_SUBDIRECTORY(gui)
-#
+if(QT4_FOUND)
+  string(REPLACE "CPPCHECK_CLI_USE_STATIC_LIBRARY"
+    "CPPCHECK_GUI_USE_STATIC_LIBRARY" EP_GUI_VARS "${EP_CLI_VARS}")
+  get_cmake_property(vars CACHE_VARIABLES)
+  foreach(v IN LISTS vars)
+    if(v MATCHES "^QT4?_")
+      list(APPEND EP_GUI_VARS ${v})
+    endif()
+  endforeach()
+  cppcheck_add_subdirectory(gui DEPENDS lib VARIABLES ${EP_GUI_VARS})
+else()
+  message("GUI not built since QT4 not found.")
+endif()
+
 ## Exclude tests from command line targets but include them to VS IDE targets.
 ## There is 'make check' -target for compiling and running tests from
 ## command line.

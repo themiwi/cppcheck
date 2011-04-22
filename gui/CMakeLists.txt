@@ -1,24 +1,28 @@
 # Instructions for building of the cppcheck Qt GUI
 
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(CPPCHECKGUI)
+
+# for non-superbuild stand-alone use
+option(CPPCHECK_GUI_USE_STATIC_LIBRARY
+  "Link GUI against static cppcheck library." OFF)
+
+set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
+find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
+
 # find and setup Qt4 for this project
-find_package(Qt4)
-
-IF(QT4_FOUND)
-
-# Add needed Qt modules
-set(QT_USE_QTHELP TRUE)
-set(QT_USE_QTMAIN TRUE)
-set(QT_USE_QTXML TRUE)
+find_package(Qt4 COMPONENTS QtCore QtGui QtHelp QtMain QtXml REQUIRED)
 include(${QT_USE_FILE})
 
-include_directories("${CPPCHECK_SOURCE_DIR}/lib"
-# Generated files (in build directory) need to know gui directory
-                    "${CPPCHECK_SOURCE_DIR}/gui"
-# Include binary directory where code from UI files gets created
-                    "${CMAKE_CURRENT_BINARY_DIR}")
+set(CPPCHECKGUI_LIBS ${CPPCHECK_LIBRARIES} ${QT_LIBRARIES})
+
+include_directories(
+  ${CPPCHECK_INCLUDE_DIRS}
+  .
+  ${CMAKE_CURRENT_BINARY_DIR})
 
 # Header files - listed for mocking
-SET(CHECK_HEADERS
+set(CPPCHECKGUI_HEADERS
   aboutdialog.h
   application.h
   applicationdialog.h
@@ -47,10 +51,10 @@ SET(CHECK_HEADERS
   xmlreport.h
   xmlreportv1.h
   xmlreportv2.h
-)
+  )
 
 # Source files
-SET(CHECKGUI_SRCS
+set(CPPCHECKGUI_SRCS
   aboutdialog.cpp
   application.cpp
   applicationdialog.cpp
@@ -79,10 +83,10 @@ SET(CHECKGUI_SRCS
   xmlreport.cpp
   xmlreportv1.cpp
   xmlreportv2.cpp
-)
+  )
 
 # UI files
-SET(CHECK_UIS
+set(CPPCHECKGUI_UIS
   about.ui
   application.ui
   file.ui
@@ -92,10 +96,10 @@ SET(CHECK_UIS
   resultsview.ui
   settings.ui
   stats.ui
-)
+  )
 
 # Translation files
-SET(CHECK_TRANS
+set(CPPCHECKGUI_TRANS
   cppcheck_de.ts
   cppcheck_en.ts
   cppcheck_fi.ts
@@ -106,39 +110,17 @@ SET(CHECK_TRANS
   cppcheck_ru.ts
   cppcheck_sr.ts
   cppcheck_sv.ts
-)
+  )
 
-SET(CHECK_RCCS gui.qrc)
-
-option(CPPCHECK_GUI_BUILD_EMBED_LIBRARY_SOURCE_CODE
-       "The source files of Cppchecks's library should be directly included
-for the compilation of the graphical user interface.")
-mark_as_advanced(CPPCHECK_GUI_BUILD_EMBED_LIBRARY_SOURCE_CODE)
-
-if(CPPCHECK_GUI_BUILD_EMBED_LIBRARY_SOURCE_CODE)
-   set(CPPCHECK_LIB_DIR "${CPPCHECK_SOURCE_DIR}/lib/")
-   include("${CPPCHECK_LIB_DIR}library_sources.cmake")
-   set(CHECKGUI_SRCS ${CHECKGUI_SRCS} ${CPPCHECK_LIB_SOURCES})
-else()
-   option(CPPCHECK_GUI_BUILD_USE_STATICALLY_LINKED_LIBRARY
-          "The static library file that was generated for Cppchecks's class library should be
-used for the link step of the graphical user interface.")
-   mark_as_advanced(CPPCHECK_GUI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-
-   if(CPPCHECK_GUI_BUILD_USE_STATICALLY_LINKED_LIBRARY)
-      set(CHECK_LIBS static_checks)   # static approach
-   else()
-      set(CHECK_LIBS checks)   # shared approach
-   endif()
-endif()
+set(CPPCHECKGUI_RCCS gui.qrc)
 
 if(WIN32)
    # Add Windows resource file
-   set(CHECKGUI_SRCS ${CHECKGUI_SRCS} cppcheck-gui.rc)
+   list(APPEND CPPCHECKGUI_SRCS cppcheck-gui.rc)
 
    if(NOT CYGWIN)
       # Windows needs additional shlwapi library.
-      set(CHECK_LIBS ${CHECK_LIBS} shlwapi)
+      list(APPEND CPPCHECKGUI_LIBS shlwapi)
    endif()
 endif()
 
@@ -146,27 +128,46 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
+if(NOT CPPCHECK_CLI_USE_STATIC_LIBRARY)
+  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
 # Generate rules for building source files from the resources
-QT4_ADD_RESOURCES(CHECK_RCC_SRCS ${CHECK_RCCS})
+qt4_add_resources(CPPCHECKGUI_RCC_SRCS ${CPPCHECKGUI_RCCS})
 
 # Process UI files
-QT4_WRAP_UI(CHECK_UIS_H ${CHECK_UIS})
+qt4_wrap_ui(CPPCHECKGUI_UIS_H ${CPPCHECKGUI_UIS})
 
 # Mock header files
-QT4_WRAP_CPP(CHECK_MOC_SRCS ${CHECK_HEADERS})
+qt4_wrap_cpp(CPPCHECKGUI_MOC_SRCS ${CPPCHECKGUI_HEADERS})
 
 # add translations ...
-QT4_ADD_TRANSLATION(CHECK_QM ${CHECK_TRANS})
+qt4_add_translation(CPPCHECKGUI_QM ${CPPCHECKGUI_TRANS})
 
 # Create folders for Visual Studio IDE
-SOURCE_GROUP("Header Files" FILES ${CHECK_HEADERS})
-SOURCE_GROUP("Ui Files" ".ui$")
-SOURCE_GROUP("Moc Files" "moc_.*cxx$")
+source_group("Header Files" FILES ${CPPCHECKGUI_HEADERS})
+source_group("Ui Files" ".ui$")
+source_group("Moc Files" "moc_.*cxx$")
 
-ADD_EXECUTABLE(cppcheck-gui WIN32 ${CHECKGUI_SRCS} ${CHECK_MOC_SRCS} ${CHECK_HEADERS} 
-               ${CHECK_UIS_H} ${CHECK_RCC_SRCS})
-TARGET_LINK_LIBRARIES(cppcheck-gui ${CHECK_LIBS} ${QT_LIBRARIES})
+add_executable(cppcheck-gui WIN32 ${CPPCHECKGUI_SRCS} ${CPPCHECKGUI_MOC_SRCS}
+  ${CPPCHECKGUI_HEADERS} ${CPPCHECKGUI_UIS_H} ${CPPCHECKGUI_RCC_SRCS})
+target_link_libraries(cppcheck-gui ${CPPCHECKGUI_LIBS})
 
-ELSE(QT4_FOUND)
-message("GUI not built since QT4 not found.")
-ENDIF(QT4_FOUND)
+if(CPPCHECK_GUI_USE_STATIC_LIBRARY)
+  set_target_properties(cppcheck-gui PROPERTIES
+    LINK_FLAGS "${CPPCHECK_STATIC_LINK_FLAGS}")
+endif()
+
+add_custom_target(translations ALL DEPENDS ${CPPCHECKGUI_QM})
+
+install(TARGETS cppcheck-gui
+  EXPORT CPPCHECKGUIExports
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+install(EXPORT CPPCHECKGUIExports
+  DESTINATION share/cppcheck/cmake)
+
+install(FILES ${CPPCHECKGUI_QM}
+  DESTINATION share/cppcheck/nls)

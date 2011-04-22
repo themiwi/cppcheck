@@ -5,6 +5,7 @@
 # The following COMPONENTS are available:
 #  LIB
 #  CLI
+#  GUI
 # Not specifying COMPONENT is equivalent to requesting LIB and CLI.
 #
 # The LIB component sets the following variables if successful:
@@ -12,7 +13,8 @@
 #  CPPCHECK_LIBRARIES
 #  CPPCHECK_STATIC_LINK_FLAGS
 #
-# The CLI component component sets the variable CPPCHECK_EXECUTABLE.
+# The CLI component and the GUI components set the variables
+# CPPCHECK_EXECUTABLE and CPPCHECK_GUI_EXECUTABLE, respectively.
 #
 # By default this module sets CPPCHECK_LIBRARIES to use the shared
 # (dynamically linked) libraries. Setting the variable CPPCHECK_USE_STATIC
@@ -29,7 +31,7 @@ if(NOT DEFINED CPPCHECK_FIND_COMPONENTS)
   set(CPPCHECK_FIND_COMPONENTS LIB CLI)
 endif()
 foreach(comp ${CPPCHECK_FIND_COMPONENTS})
-  if(NOT comp MATCHES "^(LIB|CLI)$")
+  if(NOT comp MATCHES "^(LIB|CLI|GUI)$")
     message(SEND_ERROR "Unsupported component '${comp}'")
   endif()
 endforeach()
@@ -67,6 +69,16 @@ if(CPPCHECK_FIND_COMPONENTS MATCHES CLI)
   else()
     set(CPPCHECK_FOUND FALSE)
     message(SEND_ERROR "Failed to find component CLI")
+  endif()
+endif()
+
+if(CPPCHECK_FIND_COMPONENTS MATCHES GUI)
+  if(EXISTS "${_DIR}/cppcheckGUIExports.cmake")
+    include("${_DIR}/cppcheckGUIExports.cmake")
+    set(CPPCHECK_GUI_EXECUTABLE cppcheck-gui)
+  else()
+    set(CPPCHECK_FOUND FALSE)
+    message(SEND_ERROR "Failed to find component GUI")
   endif()
 endif()
 
