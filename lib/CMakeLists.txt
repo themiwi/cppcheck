@@ -37,17 +37,17 @@ endif()
 
 if(MSVC)
   # generate /INCLUDE flags for LINK.EXE
-  set(outfile "${LIBCPPCHECK_BINARY_DIR}/LIBCPPCHECKStaticLinkFlags.cmake")
+  set(outfile "${LIBCPPCHECK_BINARY_DIR}/libcppcheckStaticLinkFlags.cmake")
   add_custom_command(OUTPUT "${outfile}"
     COMMAND "${CMAKE_COMMAND}" "-DDUMPBIN=${DUMPBIN_EXECUTABLE}"
     "-DOUTPUT=${outfile}" "-DLIBRARY=$<TARGET_FILE:static_checks>"
     -P "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
     DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake" static_checks
-    COMMENT "Generating LIBCPPCHECKStaticLinkFlags.cmake"
+    COMMENT "Generating libcppcheckStaticLinkFlags.cmake"
     VERBATIM)
   add_custom_target(staticLinkFlags ALL DEPENDS "${outfile}")
   add_dependencies(staticLinkFlags static_checks)
-  install(FILES "${outfile}" DESTINATION share/LIBCPPCHECK/cmake)
+  install(FILES "${outfile}" DESTINATION share/cppcheck/cmake)
 endif()
 
 if(PCRE_FOUND)
@@ -64,15 +64,15 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL Linux OR CYGWIN OR MINGW)
   set(CONF_STATIC_LINK_FLAGS
     "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,--whole-archive,$${_PREFIX}/lib/libchecks.a,--no-whole-archive\")")
 elseif(MSVC)
-  set(CONF_STATIC_LINK_FLAGS "include(\"$${_DIR}/LIBCPPCHECKStaticLinkFlags.cmake\")")
+  set(CONF_STATIC_LINK_FLAGS "include(\"$${_DIR}/libcppcheckStaticLinkFlags.cmake\")")
 else()
   message(SEND_ERROR "FIXME: Don't know how to do static linking")
 endif()
-configure_file(LIBCPPCHECKConfig.cmake.in
-  "${LIBCPPCHECK_BINARY_DIR}/LIBCPPCHECKConfig.cmake" @ONLY)
+configure_file(CPPCHECKConfig.cmake.in
+  "${LIBCPPCHECK_BINARY_DIR}/CPPCHECKConfig.cmake" @ONLY)
 
 install(TARGETS checks static_checks
-  EXPORT LIBCPPCHECKExports
+  EXPORT libcppcheckExports
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
@@ -81,8 +81,8 @@ install(DIRECTORY "${LIBCPPCHECK_SOURCE_DIR}/"
   DESTINATION include/cppcheck
   FILES_MATCHING PATTERN *.h)
 
-install(EXPORT LIBCPPCHECKExports
-  DESTINATION share/LIBCPPCHECK/cmake)
+install(EXPORT libcppcheckExports
+  DESTINATION share/cppcheck/cmake)
 
-install(FILES "${LIBCPPCHECK_BINARY_DIR}/LIBCPPCHECKConfig.cmake"
-  DESTINATION share/LIBCPPCHECK/cmake)
+install(FILES "${LIBCPPCHECK_BINARY_DIR}/CPPCHECKConfig.cmake"
+  DESTINATION share/cppcheck/cmake)
