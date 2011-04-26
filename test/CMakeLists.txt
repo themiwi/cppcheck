@@ -3,11 +3,9 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKTESTS)
 
-# for non-superbuild stand-alone use
-option(CPPCHECK_TEST_USE_STATIC_LIBRARY
-  "Link cppcheck-test against static cppcheck library." OFF)
-
-set(CPPCHECK_USE_STATIC ${CPPCHECK_TEST_USE_STATIC_LIBRARY})
+# The tests must be linked statically against libcppcheck because they access
+# also otherwise hidden classes.
+set(CPPCHECK_USE_STATIC TRUE)
 find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
 
 set(CPPCHECKTEST_LIBS ${CPPCHECK_LIBRARIES})
@@ -66,10 +64,6 @@ if(WIN32)
    endif()
 endif()
 
-if(NOT CPPCHECK_TEST_USE_STATIC_LIBRARY)
-  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-endif()
-
 include_directories(${CPPCHECK_INCLUDE_DIRS} ../cli ../externals/tinyxml)
 add_executable(cppcheck-test EXCLUDE_FROM_ALL ${CPPCHECKTEST_SRCS})
 target_link_libraries(cppcheck-test ${CPPCHECKTEST_LIBS})
@@ -79,11 +73,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     COMPILE_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
-if(CPPCHECK_TEST_USE_STATIC_LIBRARY)
-  add_definitions(${CPPCHECK_STATIC_COMPILE_DEFINITIONS})
-  set_target_properties(cppcheck-test PROPERTIES
-    LINK_FLAGS "${CPPCHECK_STATIC_LINK_FLAGS}")
-endif()
+add_definitions(${CPPCHECK_STATIC_COMPILE_DEFINITIONS})
+set_target_properties(cppcheck-test PROPERTIES
+  LINK_FLAGS "${CPPCHECK_STATIC_LINK_FLAGS}")
 
 # Add custom 'make check' -target
 # It compiles and runs tests

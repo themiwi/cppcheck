@@ -6,10 +6,8 @@ option(CPPCHECK_CLI_USE_STATIC_LIBRARY
   "Link CLI against static cppcheck library." OFF)
 option(CPPCHECK_GUI_USE_STATIC_LIBRARY
   "Link GUI against static cppcheck library." OFF)
-option(CPPCHECK_TEST_USE_STATIC_LIBRARY
-  "Link GUI against static cppcheck library." OFF)
 mark_as_advanced(CPPCHECK_CLI_USE_STATIC_LIBRARY
-  CPPCHECK_GUI_USE_STATIC_LIBRARY CPPCHECK_TEST_USE_STATIC_LIBRARY)
+  CPPCHECK_GUI_USE_STATIC_LIBRARY)
 
 list(APPEND CMAKE_MODULE_PATH "${CPPCHECK_SOURCE_DIR}/cmake/modules")
 
