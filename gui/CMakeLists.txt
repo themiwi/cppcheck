@@ -3,15 +3,17 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKGUI)
 
-# for non-superbuild stand-alone use
-option(CPPCHECK_GUI_USE_STATIC_LIBRARY
-  "Link GUI against static cppcheck library." OFF)
+if(CPPCHECK_USE_SUPERBUILD)
+  set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
+  find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
+  # find and setup Qt4 for this project
+  find_package(Qt4 COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml REQUIRED)
+else()
+  set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
+  set(CPPCHECK_FIND_COMPONENTS LIB)
+  include("${CPPCHECKGUI_BINARY_DIR}/../lib/CPPCHECKConfig.cmake")
+endif()
 
-set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
-find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
-
-# find and setup Qt4 for this project
-find_package(Qt4 COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml REQUIRED)
 include(${QT_USE_FILE})
 
 set(CPPCHECKGUI_LIBS ${CPPCHECK_LIBRARIES} ${QT_LIBRARIES})
@@ -138,6 +140,10 @@ qt4_wrap_ui(CPPCHECKGUI_UIS_H ${CPPCHECKGUI_UIS})
 qt4_wrap_cpp(CPPCHECKGUI_MOC_SRCS ${CPPCHECKGUI_HEADERS})
 
 # add translations ...
+if(NOT CPPCHECK_USE_SUPERBUILD)
+  set_source_files_properties(${CPPCHECKGUI_TRANS} PROPERTIES
+    OUTPUT_LOCATION "${CPPCHECKGUI_BINARY_DIR}/../${CMAKE_CFG_INTDIR}/share/cppcheck/nls")
+endif()
 qt4_add_translation(CPPCHECKGUI_QM ${CPPCHECKGUI_TRANS})
 
 # Create folders for Visual Studio IDE

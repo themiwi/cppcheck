@@ -23,10 +23,24 @@
 # instead.
 #
 
-GET_FILENAME_COMPONENT(_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-GET_FILENAME_COMPONENT(_PREFIX "${_DIR}" PATH)
-GET_FILENAME_COMPONENT(_PREFIX "${_PREFIX}" PATH)
-GET_FILENAME_COMPONENT(_PREFIX "${_PREFIX}" PATH)
+# internal guarded include macro
+macro(_cppcheck_include_once filename)
+  get_filename_component(_cppcheck_var "${filename}" NAME_WE)
+  string(TOUPPER "CPPCHECK_${_cppcheck_var}_INCLUDED" _cppcheck_var)
+  get_property(${_cppcheck_var} DIRECTORY PROPERTY ${_cppcheck_var} SET)
+  if(NOT ${_cppcheck_var})
+    include("${filename}")
+    define_property(DIRECTORY PROPERTY ${_cppcheck_var} INHERITED
+      BRIEF_DOCS "Include-guard for ${filename}"
+      FULL_DOCS "Include-guard for ${filename}")
+    set_directory_properties(PROPERTIES ${_cppcheck_var} TRUE)
+  endif()
+endmacro()
+
+get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_PREFIX "${_DIR}" PATH)
+get_filename_component(_PREFIX "${_PREFIX}" PATH)
+get_filename_component(_PREFIX "${_PREFIX}" PATH)
 
 if(NOT DEFINED CPPCHECK_FIND_COMPONENTS)
   set(CPPCHECK_FIND_COMPONENTS LIB CLI)
@@ -46,8 +60,6 @@ if(CPPCHECK_FIND_COMPONENTS MATCHES LIB)
     set(CPPCHECK_LIBRARY_DIR "${_PREFIX}/lib")
     set(CPPCHECK_LIBRARY_DIRS "${CPPCHECK_LIBRARY_DIR}")
 
-    include("${_DIR}/libcppcheckExports.cmake")
-
     set(CPPCHECK_STATIC_LIBRARY libcppcheck_static)
     set(CPPCHECK_SHARED_LIBRARY libcppcheck)
     if(CPPCHECK_USE_STATIC)
@@ -58,6 +70,8 @@ if(CPPCHECK_FIND_COMPONENTS MATCHES LIB)
 
     set(CPPCHECK_STATIC_COMPILE_FLAGS -DCPPCHECK_STATIC)
     @CONF_STATIC_LINK_FLAGS@
+
+    _cppcheck_include_once("${_DIR}/libcppcheckExports.cmake")
   else()
     set(CPPCHECK_FOUND FALSE)
     message(SEND_ERROR "Failed to find component LIB")
@@ -66,7 +80,7 @@ endif()
 
 if(CPPCHECK_FIND_COMPONENTS MATCHES CLI)
   if(EXISTS "${_DIR}/cppcheckCLIExports.cmake")
-    include("${_DIR}/cppcheckCLIExports.cmake")
+    _cppcheck_include_once("${_DIR}/cppcheckCLIExports.cmake")
     set(CPPCHECK_EXECUTABLE cppcheck)
   else()
     set(CPPCHECK_FOUND FALSE)
@@ -76,7 +90,7 @@ endif()
 
 if(CPPCHECK_FIND_COMPONENTS MATCHES GUI)
   if(EXISTS "${_DIR}/cppcheckGUIExports.cmake")
-    include("${_DIR}/cppcheckGUIExports.cmake")
+    _cppcheck_include_once("${_DIR}/cppcheckGUIExports.cmake")
     set(CPPCHECK_GUI_EXECUTABLE cppcheck-gui)
   else()
     set(CPPCHECK_FOUND FALSE)

@@ -6,14 +6,23 @@ project(LIBCPPCHECK)
 list(APPEND CMAKE_MODULE_PATH "${LIBCPPCHECK_SOURCE_DIR}/../cmake/modules")
 
 # for non-superbuild standalone use
-find_package(PCRE)
-if(PCRE_FOUND)
-   add_definitions(-DHAVE_RULES)
-   include_directories("${PCRE_INCLUDE_DIR}")
+if(CPPCHECK_USE_SUPERBUILD)
+  find_package(PCRE)
+
+  if(MSVC)
+    find_package(Dumpbin REQUIRED)
+  endif()
+else()
+  file(WRITE "${LIBCPPCHECK_BINARY_DIR}/libcppcheckExports.cmake" "
+# Generated -- Do not edit!
+set(CPPCHECK_INCLUDE_DIR \"${LIBCPPCHECK_SOURCE_DIR}\")
+set(CPPCHECK_INCLUDE_DIRS \"\${CPPCHECK_INCLUDE_DIR}\")
+")
 endif()
 
-if(MSVC)
-  find_package(Dumpbin REQUIRED)
+if(PCRE_FOUND)
+  add_definitions(-DHAVE_RULES)
+  include_directories("${PCRE_INCLUDE_DIR}")
 endif()
 
 set(CPPCHECK_LIB_DIR "")
