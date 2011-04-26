@@ -67,3 +67,5 @@ install(TARGETS cppcheck
 
 install(EXPORT cppcheckCLIExports
   DESTINATION share/cppcheck/cmake)
+
+include(InstallRequiredSystemLibraries)
