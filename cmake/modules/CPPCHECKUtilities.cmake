@@ -54,15 +54,15 @@ function(cppcheck_add_subdirectory name)
   # add external project
   ExternalProject_Add(${name}
     ${dep}
-    PREFIX "${CMAKE_BINARY_DIR}/${name}"
+    PREFIX "${CMAKE_BINARY_DIR}/superbuild/${name}"
     SOURCE_DIR "${cas_SOURCE_DIR}"
-    INSTALL_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/superbuild/inst${CFG_DIR}"
     CMAKE_ARGS "${cmwarnopts};-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
     "${instcmd}"
     )
   # remove bogus directory created by ExternalProject_Add
   if(CFG_DIR)
-    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/inst${CFG_DIR}")
+    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/superbuild/inst${CFG_DIR}")
   endif()
   ExternalProject_Add_Step(${name} forceconfigure
     COMMAND ${CMAKE_COMMAND} -E echo "Force re-configure for later builds..."

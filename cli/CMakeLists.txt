@@ -3,21 +3,21 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKCLI)
 
-# for non-superbuild stand-alone use
-option(CPPCHECK_CLI_USE_STATIC_LIBRARY
-  "Link CLI against static cppcheck library." OFF)
-
-set(CPPCHECK_USE_STATIC ${CPPCHECK_CLI_USE_STATIC_LIBRARY})
-find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
+if(CPPCHECK_USE_SUPERBUILD)
+  list(APPEND CMAKE_MODULE_PATH "${CPPCHECKCLI_SOURCE_DIR}/../cmake/modules")
+  set(CPPCHECK_USE_STATIC ${CPPCHECK_CLI_USE_STATIC_LIBRARY})
+  find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
+  find_package(PCRE)
+else()
+  set(CPPCHECK_USE_STATIC ${CPPCHECK_CLI_USE_STATIC_LIBRARY})
+  set(CPPCHECK_FIND_COMPONENTS LIB)
+  include("${CPPCHECKCLI_BINARY_DIR}/../lib/CPPCHECKConfig.cmake")
+endif()
 
 set(CPPCHECKCLI_LIBS ${CPPCHECK_LIBRARIES})
 
-list(APPEND CMAKE_MODULE_PATH "${CPPCHECKCLI_SOURCE_DIR}/../cmake/modules")
-find_package(PCRE)
 if(PCRE_FOUND)
-   add_definitions(-DHAVE_RULES)
-   include_directories("${PCRE_INCLUDE_DIR}")
-   list(APPEND CPPCHECKCLI_LIBS ${PCRE_LIBRARIES})
+  add_definitions(-DHAVE_RULES)
 endif()
 
 set(CPPCHECKCLI_SRCS
