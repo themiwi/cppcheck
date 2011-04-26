@@ -79,6 +79,12 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     COMPILE_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
+if(CPPCHECK_TEST_USE_STATIC_LIBRARY)
+  add_definitions(${CPPCHECK_STATIC_COMPILE_DEFINITIONS})
+  set_target_properties(cppcheck-test PROPERTIES
+    LINK_FLAGS "${CPPCHECK_STATIC_LINK_FLAGS}")
+endif()
+
 # Add custom 'make check' -target
 # It compiles and runs tests
 add_custom_target(check COMMAND cppcheck-test)

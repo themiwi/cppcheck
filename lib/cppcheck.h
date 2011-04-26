@@ -19,6 +19,8 @@
 #ifndef CPPCHECK_H
 #define CPPCHECK_H
 
+#include "DLLVisibility.h"
+
 #include "settings.h"
 #include "errorlogger.h"
 #include "checkunusedfunctions.h"
@@ -37,7 +39,7 @@
  * errors or places that could be improved.
  * Usage: See check() for more info.
  */
-class CppCheck : public ErrorLogger
+class CPPCHECK_API CppCheck : public ErrorLogger
 {
 public:
     /**
@@ -145,16 +147,40 @@ private:
     virtual void reportOut(const std::string &outmsg);
 
     unsigned int exitcode;
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::list<std::string> _errorList;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
     std::ostringstream _errout;
     Settings _settings;
     bool _useGlobalSuppressions;
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::string _filename;
     std::string _fileContent;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 
     void reportProgress(const std::string &filename, const char stage[], const unsigned int value);
 
+    /** @brief Key is file name, and value is the content of the file */
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+    std::map<std::string, std::string> _fileContents;
+
     CheckUnusedFunctions _checkUnusedFunctions;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
     ErrorLogger &_errorLogger;
 
     /** @brief Current preprocessor configuration */

@@ -29,7 +29,7 @@
 /// @addtogroup Checks
 /// @{
 
-class CheckUnusedFunctions: public Check
+class CPPCHECK_API CheckUnusedFunctions: public Check
 {
 public:
     /** @brief This constructor is used when registering the CheckUnusedFunctions */
@@ -90,7 +90,14 @@ private:
         bool   usedOtherFile;
     };
 
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::map<std::string, FunctionUsage> _functions;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 };
 /// @}
 //---------------------------------------------------------------------------
