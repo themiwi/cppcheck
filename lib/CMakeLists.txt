@@ -19,10 +19,6 @@ endif()
 set(CPPCHECK_LIB_DIR "")
 include("library_sources.cmake")
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
 set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
 
 add_library(libcppcheck SHARED ${CPPCHECK_LIB_SOURCES})
@@ -32,6 +28,12 @@ set_target_properties(libcppcheck PROPERTIES
 set_target_properties(libcppcheck_static PROPERTIES
   OUTPUT_NAME "cppcheck"
   PREFIX "lib")
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(CPPCHECK_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
+  set_target_properties(libcppcheck libcppcheck_static PROPERTIES
+    COMPILE_FLAGS "${CPPCHECK_FLAGS}")
+endif()
 
 if(NOT ${CMAKE_VERSION} VERSION_GREATER 2.8)
    set_target_properties(libcppcheck libcppcheck_static PROPERTIES
