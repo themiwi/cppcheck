@@ -25,13 +25,35 @@ if(PCRE_FOUND)
   include_directories("${PCRE_INCLUDE_DIR}")
 endif()
 
-set(CPPCHECK_LIB_DIR "")
-include("library_sources.cmake")
+set(LIBCPPCHECK_SOURCES
+  checkautovariables.cpp
+  checkbufferoverrun.cpp
+  checkclass.cpp
+  checkexceptionsafety.cpp
+  checkmemoryleak.cpp
+  checknullpointer.cpp
+  checkobsoletefunctions.cpp
+  checkother.cpp
+  checkpostfixoperator.cpp
+  checkstl.cpp
+  checkuninitvar.cpp
+  checkunusedfunctions.cpp
+  cppcheck.cpp
+  errorlogger.cpp
+  executionpath.cpp
+  mathlib.cpp
+  path.cpp
+  preprocessor.cpp
+  settings.cpp
+  symboldatabase.cpp
+  timer.cpp
+  token.cpp
+  tokenize.cpp)
 
 set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
 
-add_library(libcppcheck SHARED ${CPPCHECK_LIB_SOURCES})
-add_library(libcppcheck_static STATIC ${CPPCHECK_LIB_SOURCES})
+add_library(libcppcheck SHARED ${LIBCPPCHECK_SOURCES})
+add_library(libcppcheck_static STATIC ${LIBCPPCHECK_SOURCES})
 set_target_properties(libcppcheck PROPERTIES
   OUTPUT_NAME "cppcheck"
   DEFINE_SYMBOL CPPCHECK_EXPORTS)
