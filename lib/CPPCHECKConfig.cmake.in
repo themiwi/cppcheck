@@ -47,8 +47,8 @@ if(CPPCHECK_FIND_COMPONENTS MATCHES LIB)
 
     include("${_DIR}/libcppcheckExports.cmake")
 
-    set(CPPCHECK_STATIC_LIBRARY static_checks)
-    set(CPPCHECK_SHARED_LIBRARY checks)
+    set(CPPCHECK_STATIC_LIBRARY libcppcheck_static)
+    set(CPPCHECK_SHARED_LIBRARY libcppcheck)
     if(CPPCHECK_USE_STATIC)
       set(CPPCHECK_LIBRARIES "${CPPCHECK_STATIC_LIBRARY}")
     else()
