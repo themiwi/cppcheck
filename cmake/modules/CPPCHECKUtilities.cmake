@@ -45,13 +45,19 @@ function(cppcheck_add_subdirectory name)
     endif()
     list(APPEND cmargs "-D${v}")
   endforeach()
+  # 2.8.4 warns about unused CLI-defined variables...
+  if(${CMAKE_VERSION} VERSION_GREATER 2.8.3)
+    set(cmwarnopts --no-warn-unused-cli)
+  else()
+    set(cmwarnopts)
+  endif()
   # add external project
   ExternalProject_Add(${name}
     ${dep}
     PREFIX "${CMAKE_BINARY_DIR}/${name}"
     SOURCE_DIR "${cas_SOURCE_DIR}"
     INSTALL_DIR "${CMAKE_BINARY_DIR}/inst${CFG_DIR}"
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
+    CMAKE_ARGS "${cmwarnopts};-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
     "${instcmd}"
     )
   # remove bogus directory created by ExternalProject_Add
