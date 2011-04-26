@@ -22,7 +22,7 @@ _ep_get_configuration_subdir_suffix(CFG_DIR)
 
 function(cppcheck_add_subdirectory name)
   # argument parsing
-  cmake_parse_arguments(cas "NO_INSTALL" "" "SOURCE_DIR;DEPENDS;VARIABLES" ${ARGN})
+  cmake_parse_arguments(cas "NO_INSTALL" "SOURCE_DIR" "DEPENDS;VARIABLES" ${ARGN})
   set(instcmd)
   if(cas_NO_INSTALL)
     set(instcmd INSTALL_COMMAND "")
