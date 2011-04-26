@@ -67,10 +67,6 @@ else()
   list(APPEND CPPCHECKTEST_SRCS testfilelister_unix.cpp)
 endif()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
 if(NOT CPPCHECK_TEST_USE_STATIC_LIBRARY)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
@@ -78,6 +74,11 @@ endif()
 include_directories(${CPPCHECK_INCLUDE_DIRS} ../cli ../externals/tinyxml)
 add_executable(cppcheck-test EXCLUDE_FROM_ALL ${CPPCHECKTEST_SRCS})
 target_link_libraries(cppcheck-test ${CPPCHECKTEST_LIBS})
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(cppcheck-test PROPERTIES
+    COMPILE_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 # Add custom 'make check' -target
 # It compiles and runs tests

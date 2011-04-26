@@ -124,10 +124,6 @@ if(WIN32)
    endif()
 endif()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
 if(NOT CPPCHECK_GUI_USE_STATIC_LIBRARY)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
@@ -152,6 +148,10 @@ source_group("Moc Files" "moc_.*cxx$")
 add_executable(cppcheck-gui WIN32 ${CPPCHECKGUI_SRCS} ${CPPCHECKGUI_MOC_SRCS}
   ${CPPCHECKGUI_HEADERS} ${CPPCHECKGUI_UIS_H} ${CPPCHECKGUI_RCC_SRCS})
 target_link_libraries(cppcheck-gui ${CPPCHECKGUI_LIBS})
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(cppcheck-gui PROPERTIES COMPILE_FLAGS -Wall)
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 if(CPPCHECK_GUI_USE_STATIC_LIBRARY)
   set_target_properties(cppcheck-gui PROPERTIES

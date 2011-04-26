@@ -42,10 +42,6 @@ if(WIN32)
    endif()
 endif()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
 if(NOT CPPCHECK_CLI_USE_STATIC_LIBRARY)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
@@ -53,6 +49,11 @@ endif()
 include_directories(${CPPCHECK_INCLUDE_DIRS} ../externals/tinyxml)
 add_executable(cppcheck ${CPPCHECKCLI_SRCS})
 target_link_libraries(cppcheck ${CPPCHECKCLI_LIBS})
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(cppcheck PROPERTIES
+    COMPILE_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 if(CPPCHECK_CLI_USE_STATIC_LIBRARY)
   set_target_properties(cppcheck PROPERTIES
