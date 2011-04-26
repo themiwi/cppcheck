@@ -19,6 +19,8 @@
 #ifndef PATH_H_INCLUDED
 #define PATH_H_INCLUDED
 
+#include "DLLVisibility.h"
+
 #include <string>
 
 /// @addtogroup Core
@@ -31,7 +33,7 @@
  * native separator for Unix-derived systems. When giving path to user
  * or for other functions we convert path separators back to native type.
  */
-class Path
+class CPPCHECK_API Path
 {
 public:
     /**

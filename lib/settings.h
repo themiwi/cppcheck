@@ -19,6 +19,8 @@
 #ifndef settingsH
 #define settingsH
 
+#include "DLLVisibility.h"
+
 #include <list>
 #include <string>
 #include <istream>
@@ -34,14 +36,21 @@
  * to pass individual values to functions or constructors now or in the
  * future when we might have even more detailed settings.
  */
-class Settings
+class CPPCHECK_API Settings
 {
 private:
     /** @brief Code to append in the checks */
     std::string _append;
 
     /** @brief enable extra checks by id */
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::map<std::string, bool> _enabled;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 
     /** @brief terminate checking */
     bool _terminate;
@@ -108,7 +117,14 @@ public:
 
     /** @brief List of include paths, e.g. "my/includes/" which should be used
         for finding include files inside source files. (-I) */
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::list<std::string> _includePaths;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 
     /** @brief assign append code (--append) */
     void append(const std::string &filename);
@@ -133,7 +149,7 @@ public:
     std::string addEnabled(const std::string &str);
 
     /** @brief class for handling suppressions */
-    class Suppressions
+    class CPPCHECK_API Suppressions
     {
     private:
         class FileMatcher
@@ -180,7 +196,14 @@ public:
         };
 
         /** @brief List of error which the user doesn't want to see. */
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
         std::map<std::string, FileMatcher> _suppressions;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
     public:
         /**
          * @brief Don't show errors listed in the file.
@@ -291,7 +314,14 @@ public:
     /**
      * @brief Extra rules
      */
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
     std::list<Rule> rules;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 };
 
 /// @}

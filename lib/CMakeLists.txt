@@ -24,14 +24,24 @@ set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
 add_library(libcppcheck SHARED ${CPPCHECK_LIB_SOURCES})
 add_library(libcppcheck_static STATIC ${CPPCHECK_LIB_SOURCES})
 set_target_properties(libcppcheck PROPERTIES
-  OUTPUT_NAME "cppcheck")
+  OUTPUT_NAME "cppcheck"
+  DEFINE_SYMBOL CPPCHECK_EXPORTS)
 set_target_properties(libcppcheck_static PROPERTIES
+  COMPILE_DEFINITIONS CPPCHECK_STATIC
   OUTPUT_NAME "cppcheck"
   PREFIX "lib")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CPPCHECK_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
-  set_target_properties(libcppcheck libcppcheck_static PROPERTIES
+  set_target_properties(libcppcheck_static PROPERTIES
+    COMPILE_FLAGS "${CPPCHECK_FLAGS}")
+
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag(-fvisibility=hidden HAVE_FVISIBILITY_HIDDEN)
+  if(HAVE_FVISIBILITY_HIDDEN)
+    set(CPPCHECK_FLAGS "${CPPCHECK_FLAGS} -fvisibility=hidden")
+  endif()
+  set_target_properties(libcppcheck PROPERTIES
     COMPILE_FLAGS "${CPPCHECK_FLAGS}")
 endif()
 

@@ -20,6 +20,8 @@
 #ifndef errorloggerH
 #define errorloggerH
 
+#include "DLLVisibility.h"
+
 #include <list>
 #include <string>
 
@@ -32,7 +34,7 @@ class Tokenizer;
 /// @{
 
 /** @brief enum class for severity. Used when reporting errors. */
-class Severity
+class CPPCHECK_API Severity
 {
 public:
     /**
@@ -142,14 +144,14 @@ public:
  * @brief This is an interface, which the class responsible of error logging
  * should implement.
  */
-class ErrorLogger
+class CPPCHECK_API ErrorLogger
 {
 public:
 
     /**
      * Wrapper for error messages, provided by reportErr()
      */
-    class ErrorMessage
+    class CPPCHECK_API ErrorMessage
     {
     public:
         /**
@@ -157,7 +159,7 @@ public:
          * Internally paths are stored with / separator. When getting the filename
          * it is by default converted to native separators.
          */
-        class FileLocation
+        class CPPCHECK_API FileLocation
         {
         public:
             FileLocation()
@@ -212,7 +214,14 @@ public:
         std::string serialize() const;
         bool deserialize(const std::string &data);
 
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
         std::list<FileLocation> _callStack;
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
         Severity::SeverityType _severity;
         std::string _id;
 
