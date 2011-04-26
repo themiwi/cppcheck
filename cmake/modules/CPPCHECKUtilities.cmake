@@ -54,6 +54,10 @@ function(cppcheck_add_subdirectory name)
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>;${cmargs}"
     "${instcmd}"
     )
+  # remove bogus directory created by ExternalProject_Add
+  if(CFG_DIR)
+    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/inst${CFG_DIR}")
+  endif()
   ExternalProject_Add_Step(${name} forceconfigure
     COMMAND ${CMAKE_COMMAND} -E echo "Force re-configure for later builds..."
     DEPENDEES download
