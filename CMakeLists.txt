@@ -18,7 +18,7 @@ if(NOT PCRE_FOUND)
   message("PCRE not found, disabling user-defined rules")
 endif()
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtHelp QtMain QtXml)
+find_package(Qt4 COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml)
 
 # helper function
 include(CPPCHECKUtilities)

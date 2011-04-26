@@ -11,7 +11,7 @@ set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
 find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
 
 # find and setup Qt4 for this project
-find_package(Qt4 COMPONENTS QtCore QtGui QtHelp QtMain QtXml REQUIRED)
+find_package(Qt4 COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml REQUIRED)
 include(${QT_USE_FILE})
 
 set(CPPCHECKGUI_LIBS ${CPPCHECK_LIBRARIES} ${QT_LIBRARIES})
@@ -172,3 +172,18 @@ install(EXPORT CPPCHECKGUIExports
 
 install(FILES ${CPPCHECKGUI_QM}
   DESTINATION share/cppcheck/nls)
+
+# TODO app-bundle on APPLE
+
+if(APPLE OR (WIN32 AND NOT CYGWIN))
+  include(InstallRequiredSystemLibraries)
+  set(APP ${CMAKE_INSTALL_PREFIX}/bin/cppcheck-gui${CMAKE_EXECUTABLE_SUFFIX})
+  set(DIRS ${QT_BINARY_DIR} ${QT_LIBRARY_DIR})
+  install(CODE "
+include(BundleUtilities)
+# That horrible MSVC env-variable seems to creep back in and breaks the
+# super-build, so get rid of it again.
+set(ENV{VS_UNICODE_OUTPUT})
+fixup_bundle(\"${APP}\"  \"\"  \"${DIRS}\")
+")
+endif()
