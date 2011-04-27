@@ -20,25 +20,25 @@
 #define DLLVisibilityH
 
 #if defined(_WIN32) || defined (__CYGWIN__)
-  #ifdef CPPCHECK_STATIC
-    #define CPPCHECK_API
-  #else
-    // GCC on WIN32 also supports the __declspec syntax
-    #ifdef CPPCHECK_EXPORTS
-      #define CPPCHECK_API __declspec(dllexport)
-    #else
-      #define CPPCHECK_API __declspec(dllimport)
-    #endif
-  #endif
-  #define CPPCHECK_LOCAL
+#  ifdef CPPCHECK_STATIC
+#    define CPPCHECK_API
+#  else
+// GCC on WIN32 also supports the __declspec syntax
+#    ifdef CPPCHECK_EXPORTS
+#      define CPPCHECK_API __declspec(dllexport)
+#    else
+#      define CPPCHECK_API __declspec(dllimport)
+#    endif
+#  endif
+#  define CPPCHECK_LOCAL
 #else
-  #if __GNUC__ >= 4
-    #define CPPCHECK_API   __attribute__ ((visibility("default")))
-    #define CPPCHECK_LOCAL __attribute__ ((visibility("hidden")))
-  #else
-    #define CPPCHECK_API
-    #define CPPCHECK_LOCAL
-  #endif
+#  if __GNUC__ >= 4
+#    define CPPCHECK_API   __attribute__ ((visibility("default")))
+#    define CPPCHECK_LOCAL __attribute__ ((visibility("hidden")))
+#  else
+#    define CPPCHECK_API
+#    define CPPCHECK_LOCAL
+#  endif
 #endif
 
 #endif
