@@ -118,8 +118,24 @@ else(NOT CPPCHECK_USE_SUPERBUILD)
   add_dependencies(check cppcheck-test)
 
   # installation
-  # leave that trailing slash where it is!
-  install(DIRECTORY "${CPPCHECK_BINARY_DIR}/superbuild/inst/${CMAKE_CFG_INTDIR}/"
-    DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
+  set(SUPER_DIR "${CPPCHECK_BINARY_DIR}/superbuild/inst/${CMAKE_CFG_INTDIR}")
+  install(DIRECTORY
+    "${SUPER_DIR}/bin"
+    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Executables
+    USE_SOURCE_PERMISSIONS)
+  install(DIRECTORY
+    "${SUPER_DIR}/share/cppcheck/nls"
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cppcheck COMPONENT Translations
+    USE_SOURCE_PERMISSIONS)
+  install(DIRECTORY "${SUPER_DIR}/lib"
+    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Executables
+    USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN *.so* PATTERN *.dylib)
+  install(DIRECTORY "${SUPER_DIR}/lib"
+    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Development
+    FILES_MATCHING PATTERN *.lib PATTERN *.a)
+  install(DIRECTORY "${SUPER_DIR}/include"
+    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Development)
+  install(DIRECTORY "${SUPER_DIR}/share/cppcheck/cmake"
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cppcheck COMPONENT Development)
 
 endif(NOT CPPCHECK_USE_SUPERBUILD)

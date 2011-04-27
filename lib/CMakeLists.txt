@@ -119,16 +119,16 @@ configure_file(CPPCHECKConfig.cmake.in
 
 install(TARGETS libcppcheck libcppcheck_static
   EXPORT libcppcheckExports
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+  RUNTIME DESTINATION bin COMPONENT Executables
+  LIBRARY DESTINATION lib COMPONENT Executables
+  ARCHIVE DESTINATION lib COMPONENT Development)
 
 install(DIRECTORY "${LIBCPPCHECK_SOURCE_DIR}/"
-  DESTINATION include/cppcheck
+  DESTINATION include/cppcheck COMPONENT Development
   FILES_MATCHING PATTERN *.h)
 
 install(EXPORT libcppcheckExports
-  DESTINATION share/cppcheck/cmake)
+  DESTINATION share/cppcheck/cmake COMPONENT Development)
 
 install(FILES "${LIBCPPCHECK_BINARY_DIR}/CPPCHECKConfig.cmake"
-  DESTINATION share/cppcheck/cmake)
+  DESTINATION share/cppcheck/cmake COMPONENT Development)

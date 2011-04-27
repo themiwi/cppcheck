@@ -170,15 +170,15 @@ add_custom_target(translations ALL DEPENDS ${CPPCHECKGUI_QM})
 
 install(TARGETS cppcheck-gui
   EXPORT CPPCHECKGUIExports
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+  RUNTIME DESTINATION bin COMPONENT Executables
+  LIBRARY DESTINATION lib COMPONENT Executables
+  ARCHIVE DESTINATION lib COMPONENT Executables)
 
 install(EXPORT CPPCHECKGUIExports
-  DESTINATION share/cppcheck/cmake)
+  DESTINATION share/cppcheck/cmake COMPONENT Development)
 
 install(FILES ${CPPCHECKGUI_QM}
-  DESTINATION share/cppcheck/nls)
+  DESTINATION share/cppcheck/nls COMPONENT Translations)
 
 # TODO app-bundle on APPLE
 
@@ -192,5 +192,5 @@ include(BundleUtilities)
 # super-build, so get rid of it again.
 set(ENV{VS_UNICODE_OUTPUT})
 fixup_bundle(\"${APP}\"  \"\"  \"${DIRS}\")
-")
+" COMPONENT Executables)
 endif()

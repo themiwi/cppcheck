@@ -67,11 +67,16 @@ endif()
 
 install(TARGETS cppcheck
   EXPORT cppcheckCLIExports
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+  RUNTIME DESTINATION bin COMPONENT Executables
+  LIBRARY DESTINATION lib COMPONENT Executables
+  ARCHIVE DESTINATION lib COMPONENT Executables)
 
 install(EXPORT cppcheckCLIExports
-  DESTINATION share/cppcheck/cmake)
+  DESTINATION share/cppcheck/cmake COMPONENT Development)
 
+if(WIN32)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION bin COMPONENT Executables)
+else()
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION lib COMPONENT Executables)
+endif()
 include(InstallRequiredSystemLibraries)
