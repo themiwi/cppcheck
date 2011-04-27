@@ -26,7 +26,8 @@ if(NOT PCRE_FOUND)
   message("PCRE not found, disabling user-defined rules")
 endif()
 
-find_package(Qt4 COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml)
+set(CPPCHECK_QT_COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml)
+find_package(Qt4 COMPONENTS ${CPPCHECK_QT_COMPONENTS})
 if(NOT QT4_FOUND)
   message("GUI not built since QT4 not found.")
 endif()
@@ -92,7 +93,9 @@ else(NOT CPPCHECK_USE_SUPERBUILD)
   cppcheck_add_subdirectory(cli DEPENDS lib VARIABLES ${EP_CLI_VARS})
 
   if(QT4_FOUND)
-    set(EP_GUI_VARS ${EP_LIB_VARS} CPPCHECK_GUI_USE_STATIC_LIBRARY)
+    set(EP_GUI_VARS ${EP_LIB_VARS}
+      CPPCHECK_GUI_USE_STATIC_LIBRARY
+      CPPCHECK_QT_COMPONENTS)
     get_cmake_property(vars CACHE_VARIABLES)
     foreach(v IN LISTS vars)
       if(v MATCHES "^QT4?_")

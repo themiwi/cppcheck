@@ -43,6 +43,7 @@ function(cppcheck_add_subdirectory name)
     if(NOT v MATCHES =)
       set(v "${v}=${${v}}")
     endif()
+    string(REPLACE ";" "__semicolon__" v "${v}")
     list(APPEND cmargs "-D${v}")
   endforeach()
   # 2.8.4 warns about unused CLI-defined variables...
@@ -54,6 +55,7 @@ function(cppcheck_add_subdirectory name)
   # add external project
   ExternalProject_Add(${name}
     ${dep}
+    LIST_SEPARATOR __semicolon__
     PREFIX "${CMAKE_BINARY_DIR}/superbuild/${name}"
     SOURCE_DIR "${cas_SOURCE_DIR}"
     INSTALL_DIR "${CMAKE_BINARY_DIR}/superbuild/inst${CFG_DIR}"
