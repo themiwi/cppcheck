@@ -26,7 +26,7 @@ if(NOT PCRE_FOUND)
   message("PCRE not found, disabling user-defined rules")
 endif()
 
-set(CPPCHECK_QT_COMPONENTS QtMain QtCore QtGui QtHelp QtMain QtXml)
+set(CPPCHECK_QT_COMPONENTS QtMain QtCore QtGui QtMain)
 find_package(Qt4 COMPONENTS ${CPPCHECK_QT_COMPONENTS})
 if(NOT QT4_FOUND)
   message("GUI not built since QT4 not found.")
