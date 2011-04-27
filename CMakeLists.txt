@@ -139,3 +139,98 @@ else(NOT CPPCHECK_USE_SUPERBUILD)
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cppcheck COMPONENT Development)
 
 endif(NOT CPPCHECK_USE_SUPERBUILD)
+
+# create documentation (a bit tedious, but I don't see how functions would
+# simplify this significantly)
+find_program(XSLTPROC_EXECUTABLE xsltproc)
+if(XSLTPROC_EXECUTABLE)
+  # man-page
+  ##########
+  find_file(DOCBOOK2MAN_STYLESHEET manpages/docbook.xsl
+    PATHS /usr/share/xml/docbook/stylesheet/docbook-xsl
+    DOC "XSL style sheet to convert DocBook to groff")
+  if(DOCBOOK2MAN_STYLESHEET)
+    add_custom_command(OUTPUT "${CPPCHECK_BINARY_DIR}/cppcheck.1"
+      COMMAND "${XSLTPROC_EXECUTABLE}" "${DOCBOOK2MAN_STYLESHEET}"
+        "${CPPCHECK_SOURCE_DIR}/man/cppcheck.1.xml"
+      WORKING_DIRECTORY "${CPPCHECK_BINARY_DIR}"
+      DEPENDS "${XSLTPROC_EXECUTABLE}" "${DOCBOOK2MAN_STYLESHEET}"
+        "${CPPCHECK_SOURCE_DIR}/man/cppcheck.1.xml"
+      COMMENT "Generating cppcheck.1")
+    add_custom_target(man ALL DEPENDS "${CPPCHECK_BINARY_DIR}/cppcheck.1")
+    install(FILES "${CPPCHECK_BINARY_DIR}/cppcheck.1"
+      DESTINATION share/man/man1 COMPONENT Documentation)
+  else()
+    message("Not generating man-page, missing DOCBOOK2MAN_STYLESHEET")
+  endif()
+
+  # manuals
+  #########
+  add_custom_target(manuals ALL)
+  find_file(DOCBOOK2XHTML_STYLESHEET xhtml/docbook.xsl
+    PATHS /usr/share/xml/docbook/stylesheet/docbook-xsl
+    DOC "XSL style sheet to convert DocBook to XHTML")
+
+  # XHTML of manual
+  if(DOCBOOK2XHTML_STYLESHEET)
+    add_custom_command(OUTPUT "${CPPCHECK_BINARY_DIR}/manual.html"
+      COMMAND "${XSLTPROC_EXECUTABLE}" -o "${CPPCHECK_BINARY_DIR}/manual.html"
+        "${DOCBOOK2XHTML_STYLESHEET}"
+        "${CPPCHECK_SOURCE_DIR}/man/manual.docbook"
+      WORKING_DIRECTORY "${CPPCHECK_BINARY_DIR}"
+      DEPENDS "${XSLTPROC_EXECUTABLE}" "${DOCBOOK2XHTML_STYLESHEET}"
+        "${CPPCHECK_SOURCE_DIR}/man/manual.docbook"
+      COMMENT "Generating manual.html")
+    add_custom_target(manual-xhtml ALL
+      DEPENDS "${CPPCHECK_BINARY_DIR}/manual.html")
+    add_dependencies(manuals manual-xhtml)
+    install(FILES "${CPPCHECK_BINARY_DIR}/manual.html"
+      DESTINATION share/doc/cppcheck COMPONENT Documentation)
+  else()
+    message("Not generating XHTML manuals, missing DOCBOOK2XHTML_STYLESHEET")
+  endif()
+
+  # PDFs of manual, writing-rules-{1..3} and cppcheck-design
+  find_program(FOP_EXECUTABLE fop)
+  if(FOP_EXECUTABLE)
+    find_file(DOCBOOK2FO_STYLESHEET fo/docbook.xsl
+      PATHS /usr/share/xml/docbook/stylesheet/docbook-xsl
+      DOC "XSL style sheet to convert DocBook to FO")
+    if(DOCBOOK2FO_STYLESHEET)
+      foreach(doc manual writing-rules-1 writing-rules-2 writing-rules-3
+          cppcheck-design)
+        if(doc STREQUAL manual)
+          set(params)
+        else()
+          set(params --stringparam generate.toc "article nop")
+        endif()
+        add_custom_command(OUTPUT "${CPPCHECK_BINARY_DIR}/${doc}.pdf"
+          COMMAND "${XSLTPROC_EXECUTABLE}"
+            ${params} -o "${CPPCHECK_BINARY_DIR}/${doc}.fo"
+            "${DOCBOOK2FO_STYLESHEET}"
+            "${CPPCHECK_SOURCE_DIR}/man/${doc}.docbook"
+          COMMAND "${FOP_EXECUTABLE}" -pdf "${CPPCHECK_BINARY_DIR}/${doc}.pdf"
+            -fo "${CPPCHECK_BINARY_DIR}/${doc}.fo"
+          COMMAND "${CMAKE_COMMAND}" -E remove -f
+            "${CPPCHECK_BINARY_DIR}/${doc}.fo"
+          WORKING_DIRECTORY "${CPPCHECK_BINARY_DIR}"
+          DEPENDS "${XSLTPROC_EXECUTABLE}" "${FOP_EXECUTABLE}"
+            "${DOCBOOK2FO_STYLESHEET}"
+            "${CPPCHECK_SOURCE_DIR}/man/${doc}.docbook"
+          COMMENT "Generating ${doc}.pdf")
+        add_custom_target(${doc}-pdf ALL
+          DEPENDS "${CPPCHECK_BINARY_DIR}/${doc}.pdf")
+        add_dependencies(manuals ${doc}-pdf)
+        install(FILES
+          "${CPPCHECK_BINARY_DIR}/${doc}.pdf"
+          DESTINATION share/doc/cppcheck COMPONENT Documentation)
+      endforeach()
+    else()
+      message("Not generating PDF manuals, missing DOCBOOK2FO_STYLESHEET")
+    endif()
+  else()
+    message("Not generating PDF manuals, missing FOP_EXECUTABLE")
+  endif()
+else()
+  message("Not generating documentation, missing XSLTPROC_EXECUTABLE")
+endif()
