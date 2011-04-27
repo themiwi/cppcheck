@@ -50,6 +50,7 @@ SET(CPPCHECKTEST_SRCS
   testsimplifytokens.cpp
   teststl.cpp
   testsuite.cpp
+  testsuppressions.cpp
   testsymboldatabase.cpp
   testthreadexecutor.cpp
   testtoken.cpp
