@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 project(CPPCHECK)
 
+# user options
+##############
+
 option(CPPCHECK_CLI_USE_STATIC_LIBRARY
   "Link CLI against static cppcheck library." OFF)
 option(CPPCHECK_GUI_USE_STATIC_LIBRARY
@@ -19,6 +22,9 @@ else()
   set(CPPCHECK_USE_SUPERBUILD TRUE)
 endif()
 
+# find dependencies
+###################
+
 list(APPEND CMAKE_MODULE_PATH "${CPPCHECK_SOURCE_DIR}/cmake/modules")
 
 find_package(PCRE)
@@ -32,6 +38,9 @@ if(NOT QT4_FOUND)
   message("GUI not built since QT4 not found.")
 endif()
 
+# build the binaries
+####################
+
 if(NOT CPPCHECK_USE_SUPERBUILD)
   # do a normal build, much simpler...
 
@@ -39,18 +48,30 @@ if(NOT CPPCHECK_USE_SUPERBUILD)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CPPCHECK_BINARY_DIR}/lib")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CPPCHECK_BINARY_DIR}/lib")
   if(DEFINED CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CPPCHECK_BINARY_DIR}/Debug/bin")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CPPCHECK_BINARY_DIR}/Release/bin")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/bin")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CPPCHECK_BINARY_DIR}/MinSizeRel/bin")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CPPCHECK_BINARY_DIR}/Debug/lib")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CPPCHECK_BINARY_DIR}/Release/lib")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/lib")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${CPPCHECK_BINARY_DIR}/MinSizeRel/lib")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CPPCHECK_BINARY_DIR}/Debug/lib")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CPPCHECK_BINARY_DIR}/Release/lib")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/lib")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${CPPCHECK_BINARY_DIR}/MinSizeRel/lib")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG
+      "${CPPCHECK_BINARY_DIR}/Debug/bin")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE
+      "${CPPCHECK_BINARY_DIR}/Release/bin")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO
+      "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/bin")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL
+      "${CPPCHECK_BINARY_DIR}/MinSizeRel/bin")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG
+      "${CPPCHECK_BINARY_DIR}/Debug/lib")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE
+      "${CPPCHECK_BINARY_DIR}/Release/lib")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO
+      "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/lib")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL
+      "${CPPCHECK_BINARY_DIR}/MinSizeRel/lib")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG
+      "${CPPCHECK_BINARY_DIR}/Debug/lib")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE
+      "${CPPCHECK_BINARY_DIR}/Release/lib")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO
+      "${CPPCHECK_BINARY_DIR}/RelWithDebInfo/lib")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL
+      "${CPPCHECK_BINARY_DIR}/MinSizeRel/lib")
   endif()
   add_subdirectory(lib)
   add_subdirectory(cli)
@@ -140,8 +161,11 @@ else(NOT CPPCHECK_USE_SUPERBUILD)
 
 endif(NOT CPPCHECK_USE_SUPERBUILD)
 
-# create documentation (a bit tedious, but I don't see how functions would
-# simplify this significantly)
+# build the documentation
+#########################
+
+# a bit tedious, but I don't see how functions would simplify this
+# significantly
 find_program(XSLTPROC_EXECUTABLE xsltproc)
 if(XSLTPROC_EXECUTABLE)
   # man-page

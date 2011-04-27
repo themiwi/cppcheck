@@ -1,4 +1,5 @@
-# Instructions for building of the cppcheck Qt GUI
+# build the Qt-GUI
+##################
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKGUI)
@@ -143,7 +144,8 @@ qt4_wrap_cpp(CPPCHECKGUI_MOC_SRCS ${CPPCHECKGUI_HEADERS})
 # add translations ...
 if(NOT CPPCHECK_USE_SUPERBUILD)
   set_source_files_properties(${CPPCHECKGUI_TRANS} PROPERTIES
-    OUTPUT_LOCATION "${CPPCHECKGUI_BINARY_DIR}/../${CMAKE_CFG_INTDIR}/share/cppcheck/nls")
+    OUTPUT_LOCATION
+    "${CPPCHECKGUI_BINARY_DIR}/../${CMAKE_CFG_INTDIR}/share/cppcheck/nls")
 endif()
 qt4_add_translation(CPPCHECKGUI_QM ${CPPCHECKGUI_TRANS})
 

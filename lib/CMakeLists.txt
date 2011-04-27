@@ -1,4 +1,5 @@
-# Instructions for building of the cppcheck library
+# build the library
+###################
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(LIBCPPCHECK)
@@ -13,6 +14,7 @@ if(CPPCHECK_USE_SUPERBUILD)
     find_package(Dumpbin REQUIRED)
   endif()
 else()
+  # this is a hack for non-superbuild mode
   file(WRITE "${LIBCPPCHECK_BINARY_DIR}/libcppcheckExports.cmake" "
 # Generated -- Do not edit!
 set(CPPCHECK_INCLUDE_DIR \"${LIBCPPCHECK_SOURCE_DIR}\")
@@ -63,7 +65,8 @@ set_target_properties(libcppcheck_static PROPERTIES
   PREFIX "lib")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CPPCHECK_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
+  set(CPPCHECK_FLAGS
+    "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
   set_target_properties(libcppcheck_static PROPERTIES
     COMPILE_FLAGS "${CPPCHECK_FLAGS}")
 
@@ -88,7 +91,8 @@ if(MSVC)
     COMMAND "${CMAKE_COMMAND}" "-DDUMPBIN=${DUMPBIN_EXECUTABLE}"
     "-DOUTPUT=${outfile}" "-DLIBRARY=$<TARGET_FILE:libcppcheck_static>"
     -P "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
-    DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake" libcppcheck_static
+    DEPENDS "${LIBCPPCHECK_SOURCE_DIR}/generateStaticLinkFlags.cmake"
+      libcppcheck_static
     COMMENT "Generating libcppcheckStaticLinkFlags.cmake"
     VERBATIM)
   add_custom_target(staticLinkFlags ALL DEPENDS "${outfile}")
@@ -102,15 +106,18 @@ if(PCRE_FOUND)
 endif()
 
 set(_PREFIX "{_PREFIX}") # trick to get ${_PREFIX} into the configured file
-set(_DIR "{_DIR}") # ditto
+set(_DIR "{_DIR}")       # ditto
 if(APPLE)
   set(CONF_STATIC_LINK_FLAGS
-    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,-force_load,$${_PREFIX}/lib/libcppcheck.a\")")
+"set(LIBCPPCHECK_STATIC_LINK_FLAGS
+  \"-Wl,-force_load,$${_PREFIX}/lib/libcppcheck.a\")")
 elseif(CMAKE_SYSTEM_NAME STREQUAL Linux OR CYGWIN OR MINGW)
   set(CONF_STATIC_LINK_FLAGS
-    "set(LIBCPPCHECK_STATIC_LINK_FLAGS \"-Wl,--whole-archive,$${_PREFIX}/lib/libcppcheck.a,--no-whole-archive\")")
+"set(LIBCPPCHECK_STATIC_LINK_FLAGS
+  \"-Wl,--whole-archive,$${_PREFIX}/lib/libcppcheck.a,--no-whole-archive\")")
 elseif(MSVC)
-  set(CONF_STATIC_LINK_FLAGS "include(\"$${_DIR}/libcppcheckStaticLinkFlags.cmake\")")
+  set(CONF_STATIC_LINK_FLAGS
+    "include(\"$${_DIR}/libcppcheckStaticLinkFlags.cmake\")")
 else()
   message(SEND_ERROR "FIXME: Don't know how to do static linking")
 endif()

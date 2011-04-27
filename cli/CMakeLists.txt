@@ -1,4 +1,5 @@
-# Minimal CMake build file to build cppcheck command line executable
+# build the command line executable
+###################################
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKCLI)

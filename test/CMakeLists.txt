@@ -1,10 +1,11 @@
-# Instructions for building of the cppcheck test suite
+# build the tests
+#################
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(CPPCHECKTESTS)
 
 # The tests must be linked statically against libcppcheck because they access
-# also otherwise hidden classes.
+# otherwise hidden classes.
 set(CPPCHECK_USE_STATIC TRUE)
 if(CPPCHECK_USE_SUPERBUILD)
   list(APPEND CMAKE_MODULE_PATH "${CPPCHECKTESTS_SOURCE_DIR}/../cmake/modules")
@@ -76,15 +77,15 @@ add_executable(cppcheck-test EXCLUDE_FROM_ALL ${CPPCHECKTEST_SRCS})
 target_link_libraries(cppcheck-test ${CPPCHECKTEST_LIBS})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-  set_target_properties(cppcheck-test PROPERTIES
-    COMPILE_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
+  set_target_properties(cppcheck-test PROPERTIES COMPILE_FLAGS
+    "-Wall -Wextra -pedantic -Wshadow -Wno-long-long -Wfloat-equal -Wcast-qual")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
 add_definitions(${CPPCHECK_STATIC_COMPILE_DEFINITIONS})
 set_target_properties(cppcheck-test PROPERTIES
   LINK_FLAGS "${CPPCHECK_STATIC_LINK_FLAGS}")
 
-# Add custom 'make check' -target
+# Add custom 'make check' target
 # It compiles and runs tests
 add_custom_target(check COMMAND cppcheck-test)
 add_dependencies(check cppcheck-test)
