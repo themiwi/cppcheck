@@ -172,9 +172,7 @@ add_custom_target(translations ALL DEPENDS ${CPPCHECKGUI_QM})
 
 install(TARGETS cppcheck-gui
   EXPORT CPPCHECKGUIExports
-  RUNTIME DESTINATION bin COMPONENT Executables
-  LIBRARY DESTINATION lib COMPONENT Executables
-  ARCHIVE DESTINATION lib COMPONENT Executables)
+  RUNTIME DESTINATION bin COMPONENT Executables)
 
 install(EXPORT CPPCHECKGUIExports
   DESTINATION share/cppcheck/cmake COMPONENT Development)
