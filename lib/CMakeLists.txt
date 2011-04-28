@@ -52,13 +52,43 @@ set(LIBCPPCHECK_SOURCES
   token.cpp
   tokenize.cpp)
 
+set(LIBCPPCHECK_HEADERS
+  checkautovariables.h
+  checkbufferoverrun.h
+  checkclass.h
+  checkexceptionsafety.h
+  check.h
+  checkmemoryleak.h
+  checknullpointer.h
+  checkobsoletefunctions.h
+  checkother.h
+  checkpostfixoperator.h
+  checkstl.h
+  checkuninitvar.h
+  checkunusedfunctions.h
+  cppcheck.h
+  DLLVisibility.h
+  errorlogger.h
+  executionpath.h
+  mathlib.h
+  path.h
+  preprocessor.h
+  settings.h
+  symboldatabase.h
+  timer.h
+  token.h
+  tokenize.h)
+
 set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
 
-add_library(libcppcheck SHARED ${LIBCPPCHECK_SOURCES})
-add_library(libcppcheck_static STATIC ${LIBCPPCHECK_SOURCES})
+add_library(libcppcheck SHARED
+  ${LIBCPPCHECK_SOURCES} ${LIBCPPCHECK_HEADERS})
+add_library(libcppcheck_static STATIC
+  ${LIBCPPCHECK_SOURCES} ${LIBCPPCHECK_HEADERS})
 set_target_properties(libcppcheck PROPERTIES
   OUTPUT_NAME "cppcheck"
-  DEFINE_SYMBOL CPPCHECK_EXPORTS)
+  DEFINE_SYMBOL CPPCHECK_EXPORTS
+  PUBLIC_HEADER "${LIBCPPCHECK_HEADERS}")
 set_target_properties(libcppcheck_static PROPERTIES
   COMPILE_DEFINITIONS CPPCHECK_STATIC
   OUTPUT_NAME "cppcheck"
@@ -128,11 +158,8 @@ install(TARGETS libcppcheck libcppcheck_static
   EXPORT libcppcheckExports
   RUNTIME DESTINATION bin COMPONENT Executables
   LIBRARY DESTINATION lib COMPONENT Executables
-  ARCHIVE DESTINATION lib COMPONENT Development)
-
-install(DIRECTORY "${LIBCPPCHECK_SOURCE_DIR}/"
-  DESTINATION include/cppcheck COMPONENT Development
-  FILES_MATCHING PATTERN *.h)
+  ARCHIVE DESTINATION lib COMPONENT Development
+  PUBLIC_HEADER DESTINATION include/cppcheck COMPONENT Development)
 
 install(EXPORT libcppcheckExports
   DESTINATION share/cppcheck/cmake COMPONENT Development)
