@@ -31,11 +31,9 @@ public:
 private:
     void run()
     {
-        // bail out if the tests are not executed from the base folder
         {
             std::ifstream fin("test/testfilelister.cpp");
-            if (!fin.is_open())
-                return;
+            ASSERT_EQUALS_MSG(1, fin.is_open(), "Not run from top-level source directory");
         }
 
         TEST_CASE(isDirectory);
