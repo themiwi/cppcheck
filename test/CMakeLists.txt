@@ -87,5 +87,6 @@ set_target_properties(cppcheck-test PROPERTIES
 
 # Add custom 'make check' target
 # It compiles and runs tests
-add_custom_target(check COMMAND cppcheck-test)
+add_custom_target(check COMMAND cppcheck-test
+  WORKING_DIRECTORY "${CPPECHECKTEST_SOURCE_DIR}/..")
 add_dependencies(check cppcheck-test)
