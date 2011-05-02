@@ -22,6 +22,7 @@ HEADERS += $${BASEPATH}check.h \
            $${BASEPATH}mathlib.h \
            $${BASEPATH}path.h \
            $${BASEPATH}preprocessor.h \
+           $${BASEPATH}registerchecks.h \
            $${BASEPATH}settings.h \
            $${BASEPATH}symboldatabase.h \
            $${BASEPATH}timer.h \
@@ -47,6 +48,7 @@ SOURCES += $${BASEPATH}check.cpp \
            $${BASEPATH}mathlib.cpp \
            $${BASEPATH}path.cpp \
            $${BASEPATH}preprocessor.cpp \
+           $${BASEPATH}registerchecks.cpp \
            $${BASEPATH}settings.cpp \
            $${BASEPATH}symboldatabase.cpp \
            $${BASEPATH}timer.cpp \

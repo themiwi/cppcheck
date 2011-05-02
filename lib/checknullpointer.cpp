@@ -24,15 +24,6 @@
 #include "symboldatabase.h"
 //---------------------------------------------------------------------------
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckNullPointer instance;
-}
-
-//---------------------------------------------------------------------------
-
-
 /** Is string uppercase? */
 bool CheckNullPointer::isUpper(const std::string &str)
 {

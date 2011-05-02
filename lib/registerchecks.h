@@ -15,11 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifndef REGISTERCHECKS_H
+#define REGISTERCHECKS_H
+
 #include "check.h"
 
+#include <set>
 
-Check::ChecksList& Check::instances()
+/// @addtogroup Core
+/// @{
+
+class Check;
+
+/** @brief Helper class to populate Check's instances list */
+class RegisterChecks
 {
-    static ChecksList *_instances = new ChecksList();
-    return *_instances;
-}
+private:
+    /** @brief Registered, built-in checks */
+    Check::ChecksList _builtins;
+
+public:
+    /** @brief Responsible for registering the built-in Check classes */
+    RegisterChecks();
+
+    /** @brief De-registers the built-in Check classes */
+    ~RegisterChecks();
+};
+
+/// @}
+
+#endif // REGISTERCHECKS_H

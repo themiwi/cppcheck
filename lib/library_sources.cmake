@@ -1,4 +1,5 @@
 set(CPPCHECK_LIB_SOURCES
+    "${CPPCHECK_LIB_DIR}check.cpp"
     "${CPPCHECK_LIB_DIR}checkautovariables.cpp"
     "${CPPCHECK_LIB_DIR}checkbufferoverrun.cpp"
     "${CPPCHECK_LIB_DIR}checkclass.cpp"

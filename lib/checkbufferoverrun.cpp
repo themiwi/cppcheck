@@ -38,14 +38,6 @@
 
 //---------------------------------------------------------------------------
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckBufferOverrun instance;
-}
-
-//---------------------------------------------------------------------------
-
 void CheckBufferOverrun::arrayIndexOutOfBounds(const Token *tok, MathLib::bigint size, MathLib::bigint index)
 {
     if (size >= 1)

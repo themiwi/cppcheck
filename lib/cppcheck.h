@@ -22,6 +22,7 @@
 #include "settings.h"
 #include "errorlogger.h"
 #include "checkunusedfunctions.h"
+#include "registerchecks.h"
 
 #include <string>
 #include <list>
@@ -159,6 +160,8 @@ private:
 
     /** @brief Current preprocessor configuration */
     std::string     cfg;
+
+    const RegisterChecks _registerChecks;
 };
 
 /// @}

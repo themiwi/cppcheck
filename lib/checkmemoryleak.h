@@ -168,7 +168,7 @@ public:
  * -# finally, check if the simplified token list contain any leaks.
  */
 
-class CheckMemoryLeakInFunction : private Check, public CheckMemoryLeak
+class CheckMemoryLeakInFunction : public Check, public CheckMemoryLeak
 {
 public:
     /** @brief This constructor is used when registering this class */
@@ -361,7 +361,7 @@ public:
  * @brief %Check class variables, variables that are allocated in the constructor should be deallocated in the destructor
  */
 
-class CheckMemoryLeakInClass : private Check, private CheckMemoryLeak
+class CheckMemoryLeakInClass : public Check, private CheckMemoryLeak
 {
 public:
     CheckMemoryLeakInClass() : Check(myName()), CheckMemoryLeak(0, 0)
@@ -411,7 +411,7 @@ private:
 
 /** @brief detect simple memory leaks for struct members */
 
-class CheckMemoryLeakStructMember : private Check, private CheckMemoryLeak
+class CheckMemoryLeakStructMember : public Check, private CheckMemoryLeak
 {
 public:
     CheckMemoryLeakStructMember() : Check(myName()), CheckMemoryLeak(0, 0)
@@ -449,7 +449,7 @@ private:
 
 /** @brief detect simple memory leaks (address not taken) */
 
-class CheckMemoryLeakNoVar : private Check, private CheckMemoryLeak
+class CheckMemoryLeakNoVar : public Check, private CheckMemoryLeak
 {
 public:
     CheckMemoryLeakNoVar() : Check(myName()), CheckMemoryLeak(0, 0)

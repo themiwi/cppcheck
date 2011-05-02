@@ -30,13 +30,6 @@
 //---------------------------------------------------------------------------
 
 
-// Register this check class into cppcheck by creating a static instance of it..
-namespace
-{
-static CheckAutoVariables instance;
-}
-
-
 bool CheckAutoVariables::errorAv(const Token* left, const Token* right)
 {
     const Variable *var = _tokenizer->getSymbolDatabase()->getVariableFromVarId(left->varId());

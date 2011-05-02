@@ -32,15 +32,6 @@
 
 //---------------------------------------------------------------------------
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckMemoryLeakInFunction instance1;
-CheckMemoryLeakInClass instance2;
-CheckMemoryLeakStructMember instance3;
-CheckMemoryLeakNoVar instance4;
-}
-
 
 // This list needs to be alphabetically sorted so we can run bsearch on it.
 // This list contains function names whith const parameters e.g.: atof(const char *)
