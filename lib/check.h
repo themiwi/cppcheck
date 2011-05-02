@@ -54,11 +54,7 @@ public:
     }
 
     /** List of registered check classes. This is used by Cppcheck to run checks and generate documentation */
-    static std::list<Check *> &instances()
-    {
-        static std::list<Check *> _instances;
-        return _instances;
-    }
+    static std::list<Check* > &instances();
 
     /**
      * analyse code - must be thread safe
