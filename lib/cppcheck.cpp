@@ -23,6 +23,8 @@
 #include "check.h"
 #include "path.h"
 
+#include "registerchecks.h"
+
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -35,19 +37,31 @@
 #include <pcre.h>
 #endif
 
+const RegisterChecks *CppCheck::_registerChecks = 0;
+size_t CppCheck::_nInstances = 0;
+
 static TimerResults S_timerResults;
 
 CppCheck::CppCheck(ErrorLogger &errorLogger, bool useGlobalSuppressions)
     : _useGlobalSuppressions(useGlobalSuppressions), _errorLogger(errorLogger)
-    , _registerChecks()
 {
     exitcode = 0;
+    if (!_registerChecks)
+    {
+        _registerChecks = new RegisterChecks();
+    }
+    ++_nInstances;
 }
 
 CppCheck::~CppCheck()
 {
     if (_settings._showtime != SHOWTIME_NONE)
         S_timerResults.ShowResults();
+    --_nInstances;
+    if (!_nInstances)
+    {
+        delete _registerChecks;
+    }
 }
 
 void CppCheck::settings(const Settings &currentSettings)
