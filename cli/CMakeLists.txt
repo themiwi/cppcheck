@@ -1,21 +1,11 @@
 # build the command line executable
 ###################################
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(CPPCHECKCLI)
-
-if(CPPCHECK_USE_SUPERBUILD)
-  list(APPEND CMAKE_MODULE_PATH "${CPPCHECKCLI_SOURCE_DIR}/../cmake/modules")
-  set(CPPCHECK_USE_STATIC ${CPPCHECK_CLI_USE_STATIC_LIBRARY})
-  find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
-  find_package(PCRE)
+if(CPPCHECK_CLI_USE_STATIC_LIBRARY)
+  set(CPPCHECKCLI_LIBS libcppcheck_static)
 else()
-  set(CPPCHECK_USE_STATIC ${CPPCHECK_CLI_USE_STATIC_LIBRARY})
-  set(CPPCHECK_FIND_COMPONENTS LIB)
-  include("${CPPCHECKCLI_BINARY_DIR}/../lib/CPPCHECKConfig.cmake")
+  set(CPPCHECKCLI_LIBS libcppcheck)
 endif()
-
-set(CPPCHECKCLI_LIBS ${CPPCHECK_LIBRARIES})
 
 if(PCRE_FOUND)
   add_definitions(-DHAVE_RULES)
@@ -51,7 +41,7 @@ if(NOT CPPCHECK_CLI_USE_STATIC_LIBRARY)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 
-include_directories(${CPPCHECK_INCLUDE_DIRS} ../externals/tinyxml)
+include_directories(../lib ../externals/tinyxml)
 add_executable(cppcheck ${CPPCHECKCLI_SRCS})
 target_link_libraries(cppcheck ${CPPCHECKCLI_LIBS})
 

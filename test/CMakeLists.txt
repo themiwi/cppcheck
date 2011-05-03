@@ -1,21 +1,7 @@
 # build the tests
 #################
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(CPPCHECKTESTS)
-
-# The tests must be linked statically against libcppcheck because they access
-# otherwise hidden classes.
-set(CPPCHECK_USE_STATIC TRUE)
-if(CPPCHECK_USE_SUPERBUILD)
-  list(APPEND CMAKE_MODULE_PATH "${CPPCHECKTESTS_SOURCE_DIR}/../cmake/modules")
-  find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
-else()
-  set(CPPCHECK_FIND_COMPONENTS LIB)
-  include("${CPPCHECKTESTS_BINARY_DIR}/../lib/CPPCHECKConfig.cmake")
-endif()
-
-set(CPPCHECKTEST_LIBS ${CPPCHECK_LIBRARIES})
+set(CPPCHECKTEST_LIBS libcppcheck_static)
 
 SET(CPPCHECKTEST_SRCS
   ../cli/cmdlineparser.cpp
@@ -72,7 +58,7 @@ if(WIN32)
    endif()
 endif()
 
-include_directories(${CPPCHECK_INCLUDE_DIRS} ../cli ../externals/tinyxml)
+include_directories(../lib ../cli ../externals/tinyxml)
 add_executable(cppcheck-test EXCLUDE_FROM_ALL ${CPPCHECKTEST_SRCS})
 target_link_libraries(cppcheck-test ${CPPCHECKTEST_LIBS})
 

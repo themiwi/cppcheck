@@ -1,27 +1,18 @@
 # build the Qt-GUI
 ##################
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(CPPCHECKGUI)
-
-if(CPPCHECK_USE_SUPERBUILD)
-  set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
-  find_package(CPPCHECK COMPONENTS LIB REQUIRED NO_MODULE)
-  # find and setup Qt4 for this project
-  find_package(Qt4 COMPONENTS ${CPPCHECK_QT_COMPONENTS} REQUIRED)
-else()
-  set(CPPCHECK_USE_STATIC ${CPPCHECK_GUI_USE_STATIC_LIBRARY})
-  set(CPPCHECK_FIND_COMPONENTS LIB)
-  include("${CPPCHECKGUI_BINARY_DIR}/../lib/CPPCHECKConfig.cmake")
-endif()
-
 include(${QT_USE_FILE})
 
-set(CPPCHECKGUI_LIBS ${CPPCHECK_LIBRARIES} ${QT_LIBRARIES})
+if(CPPCHECK_CLI_USE_STATIC_LIBRARY)
+  set(CPPCHECKGUI_LIBS libcppcheck_static)
+else()
+  set(CPPCHECKGUI_LIBS libcppcheck)
+endif()
+list(APPEND CPPCHECKGUI_LIBS ${QT_LIBRARIES})
 
 include_directories(
-  ${CPPCHECK_INCLUDE_DIRS}
   .
+  ../lib
   ${CMAKE_CURRENT_BINARY_DIR})
 
 # Header files - listed for mocking
@@ -145,7 +136,7 @@ qt4_wrap_cpp(CPPCHECKGUI_MOC_SRCS ${CPPCHECKGUI_HEADERS})
 if(NOT CPPCHECK_USE_SUPERBUILD)
   set_source_files_properties(${CPPCHECKGUI_TRANS} PROPERTIES
     OUTPUT_LOCATION
-    "${CPPCHECKGUI_BINARY_DIR}/../${CMAKE_CFG_INTDIR}/share/cppcheck/nls")
+      "${CMAKE_CURRENT_BINARY_DIR}/../${CMAKE_CFG_INTDIR}/share/cppcheck/nls")
 endif()
 qt4_add_translation(CPPCHECKGUI_QM ${CPPCHECKGUI_TRANS})
 

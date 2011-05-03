@@ -11,8 +11,6 @@
 # The LIB component sets the following variables if successful:
 #  CPPCHECK_INCLUDE_DIRS
 #  CPPCHECK_LIBRARIES
-#  CPPCHECK_STATIC_LINK_FLAGS
-#  CPPCHECK_STATIC_COMPILE_FLAGS
 #
 # The CLI component and the GUI components set the variables
 # CPPCHECK_EXECUTABLE and CPPCHECK_GUI_EXECUTABLE, respectively.
@@ -67,9 +65,6 @@ if(CPPCHECK_FIND_COMPONENTS MATCHES LIB)
     else()
       set(CPPCHECK_LIBRARIES "${CPPCHECK_SHARED_LIBRARY}")
     endif()
-
-    set(CPPCHECK_STATIC_COMPILE_FLAGS -DCPPCHECK_STATIC)
-    @CONF_STATIC_LINK_FLAGS@
 
     _cppcheck_include_once("${_DIR}/libcppcheckExports.cmake")
   else()
