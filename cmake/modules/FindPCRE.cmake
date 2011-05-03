@@ -11,13 +11,13 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-if (PCRE_INCLUDE_DIR AND PCRE_PCREPOSIX_LIBRARY AND PCRE_PCRE_LIBRARY)
+if(PCRE_INCLUDE_DIR AND PCRE_PCRE_LIBRARY)
   # Already in cache, be silent
   set(PCRE_FIND_QUIETLY TRUE)
-endif (PCRE_INCLUDE_DIR AND PCRE_PCREPOSIX_LIBRARY AND PCRE_PCRE_LIBRARY)
+endif()
 
 
-if (NOT WIN32)
+if(NOT WIN32)
   # use pkg-config to get the directories and then use these values
   # in the FIND_PATH() and FIND_LIBRARY() calls
   find_package(PkgConfig)
@@ -25,18 +25,17 @@ if (NOT WIN32)
   pkg_check_modules(PC_PCRE QUIET libpcre)
 
   set(PCRE_DEFINITIONS ${PC_PCRE_CFLAGS_OTHER})
-endif (NOT WIN32)
+endif()
 
 find_path(PCRE_INCLUDE_DIR pcre.h
-          HINTS "${PC_PCRE_INCLUDEDIR}" ${PC_PCRE_INCLUDE_DIRS}
-          PATH_SUFFIXES pcre)
+  HINTS "${PC_PCRE_INCLUDEDIR}" ${PC_PCRE_INCLUDE_DIRS}
+  PATH_SUFFIXES pcre)
 
-find_library(PCRE_PCRE_LIBRARY NAMES pcre pcred HINTS "${PC_PCRE_LIBDIR}" ${PC_PCRE_LIBRARY_DIRS})
-find_library(PCRE_PCREPOSIX_LIBRARY NAMES pcreposix pcreposixd HINTS "${PC_PCRE_LIBDIR}" ${PC_PCRE_LIBRARY_DIRS})
+find_library(PCRE_LIBRARY NAMES pcre pcred HINTS "${PC_PCRE_LIBDIR}" ${PC_PCRE_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(PCRE DEFAULT_MSG PCRE_INCLUDE_DIR PCRE_PCRE_LIBRARY PCRE_PCREPOSIX_LIBRARY )
+find_package_handle_standard_args(PCRE DEFAULT_MSG PCRE_INCLUDE_DIR PCRE_LIBRARY)
 
-set(PCRE_LIBRARIES "${PCRE_PCRE_LIBRARY}" "${PCRE_PCREPOSIX_LIBRARY}")
+set(PCRE_LIBRARIES "${PCRE_LIBRARY}")
 
-mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
+mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARY)
