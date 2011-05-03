@@ -24,7 +24,6 @@
 #include "settings.h"
 #include "errorlogger.h"
 #include "checkunusedfunctions.h"
-#include "registerchecks.h"
 
 #include <string>
 #include <list>
@@ -33,6 +32,8 @@
 
 /// @addtogroup Core
 /// @{
+
+class RegisterChecks;
 
 /**
  * @brief This is the base class which will use other classes to do
@@ -187,7 +188,8 @@ private:
     /** @brief Current preprocessor configuration */
     std::string     cfg;
 
-    const RegisterChecks _registerChecks;
+    static const RegisterChecks *_registerChecks;
+    static size_t _nInstances;
 };
 
 /// @}
