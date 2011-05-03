@@ -40,6 +40,8 @@
 class CPPCHECK_API Check
 {
 public:
+    typedef std::set<Check* > ChecksList;
+
     /** This constructor is used when registering the CheckClass */
     Check(const std::string &aname);
 
@@ -49,18 +51,10 @@ public:
     { }
 
     virtual ~Check()
-    {
-#ifndef DJGPP
-        instances().remove(this);
-#endif
-    }
+    {}
 
     /** List of registered check classes. This is used by Cppcheck to run checks and generate documentation */
-    static std::list<Check *> &instances()
-    {
-        static std::list<Check *> _instances;
-        return _instances;
-    }
+    static ChecksList &instances();
 
     /**
      * analyse code - must be thread safe
@@ -195,10 +189,7 @@ template <> struct less<Check *>
 
 inline Check::Check(const std::string &aname)
     : _name(aname), _tokenizer(0), _settings(0), _errorLogger(0)
-{
-    instances().push_back(this);
-    instances().sort(std::less<Check *>());
-}
+{}
 
 /// @}
 

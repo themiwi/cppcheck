@@ -30,6 +30,7 @@ endif()
 set(LIBCPPCHECK_SOURCES
   checkautovariables.cpp
   checkbufferoverrun.cpp
+  check.cpp
   checkclass.cpp
   checkexceptionsafety.cpp
   checkmemoryleak.cpp
@@ -48,6 +49,7 @@ set(LIBCPPCHECK_SOURCES
   preprocessor.cpp
   settings.cpp
   symboldatabase.cpp
+  registerchecks.cpp
   timer.cpp
   token.cpp
   tokenize.cpp)
@@ -75,6 +77,7 @@ set(LIBCPPCHECK_HEADERS
   preprocessor.h
   settings.h
   symboldatabase.h
+  registerchecks.h
   timer.h
   token.h
   tokenize.h)

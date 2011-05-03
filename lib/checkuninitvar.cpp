@@ -25,14 +25,6 @@
 #include <algorithm>
 //---------------------------------------------------------------------------
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckUninitVar instance;
-}
-
-//---------------------------------------------------------------------------
-
 /// @addtogroup Checks
 /// @{
 

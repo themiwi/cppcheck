@@ -26,12 +26,6 @@
 //---------------------------------------------------------------------------
 
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckPostfixOperator instance;
-}
-
 void CheckPostfixOperator::postfixOperator()
 {
     if (!_settings->_checkCodingStyle)

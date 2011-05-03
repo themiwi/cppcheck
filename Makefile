@@ -46,7 +46,8 @@ MAN_SOURCE=man/cppcheck.1.xml
 
 ###### Object Files
 
-LIBOBJ =      lib/checkautovariables.o \
+LIBOBJ =      lib/check.o \
+              lib/checkautovariables.o \
               lib/checkbufferoverrun.o \
               lib/checkclass.o \
               lib/checkexceptionsafety.o \
@@ -64,6 +65,7 @@ LIBOBJ =      lib/checkautovariables.o \
               lib/mathlib.o \
               lib/path.o \
               lib/preprocessor.o \
+              lib/registerchecks.o \
               lib/settings.o \
               lib/symboldatabase.o \
               lib/timer.o \
@@ -163,6 +165,9 @@ install: cppcheck
 
 ###### Build
 
+lib/check.o: lib/check.cpp lib/check.h lib/token.h lib/tokenize.h lib/settings.h lib/errorlogger.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/check.o lib/check.cpp
+
 lib/checkautovariables.o: lib/checkautovariables.cpp lib/checkautovariables.h lib/check.h lib/token.h lib/tokenize.h lib/settings.h lib/errorlogger.h lib/symboldatabase.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/checkautovariables.o lib/checkautovariables.cpp
 
@@ -199,10 +204,10 @@ lib/checkuninitvar.o: lib/checkuninitvar.cpp lib/checkuninitvar.h lib/check.h li
 lib/checkunusedfunctions.o: lib/checkunusedfunctions.cpp lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/settings.h lib/errorlogger.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/checkunusedfunctions.o lib/checkunusedfunctions.cpp
 
-lib/cppcheck.o: lib/cppcheck.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/preprocessor.h lib/path.h lib/timer.h
+lib/cppcheck.o: lib/cppcheck.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h lib/preprocessor.h lib/path.h lib/timer.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/cppcheck.o lib/cppcheck.cpp
 
-lib/errorlogger.o: lib/errorlogger.cpp lib/errorlogger.h lib/settings.h lib/path.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h
+lib/errorlogger.o: lib/errorlogger.cpp lib/errorlogger.h lib/settings.h lib/path.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/errorlogger.o lib/errorlogger.cpp
 
 lib/executionpath.o: lib/executionpath.cpp lib/executionpath.h lib/token.h
@@ -216,6 +221,9 @@ lib/path.o: lib/path.cpp lib/path.h
 
 lib/preprocessor.o: lib/preprocessor.cpp lib/preprocessor.h lib/tokenize.h lib/token.h lib/path.h lib/errorlogger.h lib/settings.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/preprocessor.o lib/preprocessor.cpp
+
+lib/registerchecks.o: lib/registerchecks.cpp lib/registerchecks.h lib/check.h lib/token.h lib/tokenize.h lib/settings.h lib/errorlogger.h lib/checkautovariables.h lib/checkbufferoverrun.h lib/mathlib.h lib/checkclass.h lib/symboldatabase.h lib/checkexceptionsafety.h lib/checkmemoryleak.h lib/checknullpointer.h lib/checkobsoletefunctions.h lib/checkother.h lib/checkpostfixoperator.h lib/checkstl.h lib/checkuninitvar.h lib/checkunusedfunctions.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/registerchecks.o lib/registerchecks.cpp
 
 lib/settings.o: lib/settings.cpp lib/settings.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/settings.o lib/settings.cpp
@@ -232,10 +240,10 @@ lib/token.o: lib/token.cpp lib/token.h lib/errorlogger.h lib/settings.h lib/chec
 lib/tokenize.o: lib/tokenize.cpp lib/tokenize.h lib/token.h lib/mathlib.h lib/settings.h lib/errorlogger.h lib/check.h lib/path.h lib/symboldatabase.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_LIB} -c -o lib/tokenize.o lib/tokenize.cpp
 
-cli/cmdlineparser.o: cli/cmdlineparser.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/timer.h cli/cmdlineparser.h lib/path.h cli/filelister.h
+cli/cmdlineparser.o: cli/cmdlineparser.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h lib/timer.h cli/cmdlineparser.h lib/path.h cli/filelister.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_CLI} -c -o cli/cmdlineparser.o cli/cmdlineparser.cpp
 
-cli/cppcheckexecutor.o: cli/cppcheckexecutor.cpp cli/cppcheckexecutor.h lib/errorlogger.h lib/settings.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h cli/threadexecutor.h cli/cmdlineparser.h cli/filelister.h lib/path.h cli/pathmatch.h
+cli/cppcheckexecutor.o: cli/cppcheckexecutor.cpp cli/cppcheckexecutor.h lib/errorlogger.h lib/settings.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h cli/threadexecutor.h cli/cmdlineparser.h cli/filelister.h lib/path.h cli/pathmatch.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_CLI} -c -o cli/cppcheckexecutor.o cli/cppcheckexecutor.cpp
 
 cli/filelister.o: cli/filelister.cpp cli/filelister.h lib/path.h
@@ -247,7 +255,7 @@ cli/main.o: cli/main.cpp cli/cppcheckexecutor.h lib/errorlogger.h lib/settings.h
 cli/pathmatch.o: cli/pathmatch.cpp cli/pathmatch.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_CLI} -c -o cli/pathmatch.o cli/pathmatch.cpp
 
-cli/threadexecutor.o: cli/threadexecutor.cpp cli/cppcheckexecutor.h lib/errorlogger.h lib/settings.h cli/threadexecutor.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h
+cli/threadexecutor.o: cli/threadexecutor.cpp cli/cppcheckexecutor.h lib/errorlogger.h lib/settings.h cli/threadexecutor.h lib/cppcheck.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_CLI} -c -o cli/threadexecutor.o cli/threadexecutor.cpp
 
 test/options.o: test/options.cpp test/options.h
@@ -271,13 +279,13 @@ test/testcmdlineparser.o: test/testcmdlineparser.cpp test/testsuite.h lib/errorl
 test/testconstructors.o: test/testconstructors.cpp lib/tokenize.h lib/checkclass.h lib/check.h lib/token.h lib/settings.h lib/errorlogger.h lib/symboldatabase.h test/testsuite.h test/redirect.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testconstructors.o test/testconstructors.cpp
 
-test/testcppcheck.o: test/testcppcheck.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h test/testsuite.h test/redirect.h lib/path.h
+test/testcppcheck.o: test/testcppcheck.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h test/testsuite.h test/redirect.h lib/path.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testcppcheck.o test/testcppcheck.cpp
 
 test/testdivision.o: test/testdivision.cpp lib/tokenize.h lib/checkother.h lib/check.h lib/token.h lib/settings.h lib/errorlogger.h test/testsuite.h test/redirect.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testdivision.o test/testdivision.cpp
 
-test/testerrorlogger.o: test/testerrorlogger.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h test/testsuite.h test/redirect.h
+test/testerrorlogger.o: test/testerrorlogger.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h test/testsuite.h test/redirect.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testerrorlogger.o test/testerrorlogger.cpp
 
 test/testexceptionsafety.o: test/testexceptionsafety.cpp lib/tokenize.h lib/checkexceptionsafety.h lib/check.h lib/token.h lib/settings.h lib/errorlogger.h test/testsuite.h test/redirect.h
@@ -334,13 +342,13 @@ test/teststl.o: test/teststl.cpp lib/tokenize.h lib/checkstl.h lib/check.h lib/t
 test/testsuite.o: test/testsuite.cpp test/testsuite.h lib/errorlogger.h lib/settings.h test/redirect.h test/options.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testsuite.o test/testsuite.cpp
 
-test/testsuppressions.o: test/testsuppressions.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h test/testsuite.h test/redirect.h
+test/testsuppressions.o: test/testsuppressions.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h test/testsuite.h test/redirect.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testsuppressions.o test/testsuppressions.cpp
 
 test/testsymboldatabase.o: test/testsymboldatabase.cpp test/testsuite.h lib/errorlogger.h lib/settings.h test/redirect.h test/testutils.h lib/tokenize.h lib/token.h lib/symboldatabase.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testsymboldatabase.o test/testsymboldatabase.cpp
 
-test/testthreadexecutor.o: test/testthreadexecutor.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h test/testsuite.h test/redirect.h
+test/testthreadexecutor.o: test/testthreadexecutor.cpp lib/cppcheck.h lib/settings.h lib/errorlogger.h lib/checkunusedfunctions.h lib/check.h lib/token.h lib/tokenize.h lib/registerchecks.h test/testsuite.h test/redirect.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${INCLUDE_FOR_TEST} -c -o test/testthreadexecutor.o test/testthreadexecutor.cpp
 
 test/testtoken.o: test/testtoken.cpp test/testsuite.h lib/errorlogger.h lib/settings.h test/redirect.h test/testutils.h lib/tokenize.h lib/token.h

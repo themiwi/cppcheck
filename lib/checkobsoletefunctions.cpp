@@ -25,12 +25,6 @@
 //---------------------------------------------------------------------------
 
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckObsoleteFunctions instance;
-}
-
 void CheckObsoleteFunctions::obsoleteFunctions()
 {
     if (!_settings->_checkCodingStyle)

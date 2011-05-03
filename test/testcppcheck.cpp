@@ -72,9 +72,9 @@ private:
 
     void instancesSorted()
     {
-        for (std::list<Check *>::iterator i = Check::instances().begin(); i != Check::instances().end(); ++i)
+        for (Check::ChecksList::iterator i = Check::instances().begin(); i != Check::instances().end(); ++i)
         {
-            std::list<Check *>::iterator j = i;
+            Check::ChecksList::iterator j = i;
             ++j;
             if (j != Check::instances().end())
             {

@@ -27,14 +27,6 @@
 #include <stack>
 //---------------------------------------------------------------------------
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckOther instance;
-}
-
-//---------------------------------------------------------------------------
-
 void CheckOther::checkIncrementBoolean()
 {
     if (!_settings->_checkCodingStyle)

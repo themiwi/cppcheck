@@ -39,6 +39,7 @@ static TimerResults S_timerResults;
 
 CppCheck::CppCheck(ErrorLogger &errorLogger, bool useGlobalSuppressions)
     : _useGlobalSuppressions(useGlobalSuppressions), _errorLogger(errorLogger)
+    , _registerChecks()
 {
     exitcode = 0;
 }
@@ -220,7 +221,7 @@ void CppCheck::analyseFile(std::istream &fin, const std::string &filename)
 
     // Analyse the tokens..
     std::set<std::string> data;
-    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+    for (Check::ChecksList::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
     {
         (*it)->analyse(tokenizer.tokens(), data);
     }
@@ -228,7 +229,7 @@ void CppCheck::analyseFile(std::istream &fin, const std::string &filename)
     // Save analysis results..
     // TODO: This loop should be protected by a mutex or something like that
     //       The saveAnalysisData must _not_ be called from many threads at the same time.
-    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+    for (Check::ChecksList::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
     {
         (*it)->saveAnalysisData(data);
     }
@@ -263,7 +264,7 @@ void CppCheck::checkFile(const std::string &code, const char FileName[])
     timer2.Stop();
 
     // call all "runChecks" in all registered Check classes
-    for (std::list<Check *>::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+    for (Check::ChecksList::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
     {
         if (_settings.terminated())
             return;
@@ -286,7 +287,7 @@ void CppCheck::checkFile(const std::string &code, const char FileName[])
         _checkUnusedFunctions.parseTokens(_tokenizer);
 
     // call all "runSimplifiedChecks" in all registered Check classes
-    for (std::list<Check *>::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+    for (Check::ChecksList::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
     {
         if (_settings.terminated())
             return;
@@ -441,7 +442,7 @@ void CppCheck::reportStatus(unsigned int /*fileindex*/, unsigned int /*filecount
 void CppCheck::getErrorMessages()
 {
     // call all "getErrorMessages" in all registered Check classes
-    for (std::list<Check *>::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+    for (Check::ChecksList::iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
         (*it)->getErrorMessages(this, &_settings);
 
     Tokenizer tokenizer(&_settings, 0);

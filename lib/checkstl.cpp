@@ -21,13 +21,6 @@
 #include "symboldatabase.h"
 #include <sstream>
 
-// Register this check class (by creating a static instance of it)
-namespace
-{
-CheckStl instance;
-}
-
-
 // Error message for bad iterator usage..
 void CheckStl::invalidIteratorError(const Token *tok, const std::string &iteratorName)
 {

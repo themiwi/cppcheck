@@ -23,15 +23,6 @@
 
 //---------------------------------------------------------------------------
 
-// Register CheckExceptionSafety..
-namespace
-{
-CheckExceptionSafety instance;
-}
-
-
-//---------------------------------------------------------------------------
-
 void CheckExceptionSafety::destructors()
 {
     // This is a style error..
